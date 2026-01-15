@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blythello - Hall of Fame</title>
+    <meta name="description" content="Blythello - The world of Blythe dolls. Join the Hall of Fame and become a Founding Member.">
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
+    <style>
+        :root {
+            --main-bg: linear-gradient(135deg, #fdfcfb 0%, #e2d1f9 100%);
+            --accent-color: #ffb7c5;
+            --text-dark: #2d3436;
+            --text-gray: #636e72;
+            --vip-purple: #8854d0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--main-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            max-height: 95vh;
+            padding: 30px 40px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            color: var(--vip-purple);
+        }
+
+        .content {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .left-side {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .doll-face-animation {
+            max-width: 100%;
+            max-height: 60vh;
+            width: auto;
+            height: auto;
+            opacity: 0;
+            filter: blur(15px);
+            transform: translateY(25px);
+            animation: magicReveal 3.5s ease-out forwards;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            object-fit: contain;
+        }
+
+        @keyframes magicReveal {
+            to {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+        }
+
+        .right-side {
+            flex: 1.2;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Скрыть скроллбар для красоты */
+        .right-side::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .right-side::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+
+        .right-side::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin: 0 0 10px 0;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex-shrink: 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin: 0 0 20px 0;
+            font-weight: 300;
+            flex-shrink: 0;
+        }
+
+        .promo-box {
+            margin: 15px 0;
+            padding: 20px;
+            border-left: 4px solid var(--accent-color);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 0 10px 10px 0;
+            flex-shrink: 0;
+        }
+
+        .status-highlight {
+            font-size: 1.1rem;
+            color: var(--vip-purple);
+            font-weight: bold;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
+        .contest-rules {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 10px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 10px;
+            border: 1px dashed var(--accent-color);
+        }
+
+        .loader-container {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 2px solid rgba(255, 183, 197, 0.3);
+            flex-shrink: 0;
+        }
+
+        .loader-text {
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 35%;
+            background: linear-gradient(90deg, var(--accent-color), #ff8ba0);
+            box-shadow: 0 0 10px rgba(255, 183, 197, 0.7);
+            animation: fillProgress 2s ease-in-out forwards;
+            border-radius: 5px;
+        }
+
+        @keyframes fillProgress {
+            from { width: 0; }
+            to { width: 35%; }
+        }
+
+        .percentage {
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--vip-purple);
+        }
+
+        .footer-note {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(136, 84, 208, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid var(--vip-purple);
+            flex-shrink: 0;
+        }
+
+        .thanks-note {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 15px;
+            color: var(--text-gray);
+            flex-shrink: 0;
+        }
+
+        .insta-link {
+            text-decoration: none;
+            color: var(--vip-purple);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 5px;
+            background: rgba(136, 84, 208, 0.1);
+        }
+
+        .insta-link:hover {
+            color: #e1306c;
+            background: rgba(225, 48, 108, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .insta-link:focus {
+            outline: 2px solid var(--vip-purple);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .insta-icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            fill: currentColor;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                max-height: 98vh;
+                padding: 25px 30px;
+            }
+            
+            .content {
+                gap: 30px;
+            }
+            
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .doll-face-animation {
+                max-height: 50vh;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+                padding: 10px;
+            }
+            
+            .container {
+                max-height: none;
+                height: auto;
+                overflow: visible;
+            }
+            
+            .content {
+                flex-direction: column;
+                overflow: visible;
+            }
+            
+            .right-side {
+                overflow-y: visible;
+                padding-right: 0;
+                height: auto;
+            }
+            
+            .left-side {
+                max-height: 40vh;
+            }
+            
+            .doll-face-animation {
+                max-height: 40vh;
+            }
+            
+            .main-title {
+                font-size: 2.2rem;
+                text-align: center;
+            }
+            
+            .subtitle {
+                text-align: center;
+            }
+            
+            .promo-box {
+                border-left: none;
+                border-top: 3px solid var(--accent-color);
+                border-radius: 10px;
+                margin: 15px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                width: 98%;
+                border-radius: 30px;
+            }
+            
+            .main-title {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="logo">
+            <span class="brand">Blythello</span>.com
+        </header>
+
+        <main class="content">
+            <div class="left-side">
+                <img src="Gemini_Generated_Image_mce530mce530mce5.png" 
+                     alt="Blythe doll face with geometric patterns - minimalist art style" 
+                     class="doll-face-animation"
+                     width="400" 
+                     height="500">
+            </div>
+
+            <div class="right-side">
+                <h1 class="main-title">WE'RE ALMOST<br>READY!</h1>
+                <p class="subtitle">The world of Blythe is coming soon.</p>
+                
+                <div class="promo-box">
+                    <p>Go to Instagram, ask <strong>@moriteadolls</strong> what she thinks about the website, and send us a screenshot of her reply.</p>
+                    
+                    <p class="status-highlight">By doing this, you can participate in the promotion for <strong>Founding Member status</strong> and enter our <strong>"Hall of Fame"</strong> forever!</p>
+                    
+                    <p class="contest-rules">One participant is chosen every 24 hours. Once you submit your screenshot, you stay in the draw permanently.</p>
+                </div>
+
+                <div class="loader-container">
+                    <span class="loader-text">LAUNCHING SOON...</span>
+                    <div class="progress-bar" 
+                         role="progressbar" 
+                         aria-valuenow="35" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100" 
+                         aria-label="Website launch progress">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <span class="percentage">35%</span>
+                </div>
+
+                <p class="footer-note">Be with us from the very beginning. We are preparing a completely new approach to the Blythe doll community.</p>
+                
+                <div class="thanks-note">
+                    The site administration thanks 
+                    <a href="https://instagram.com/moriteadolls" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       class="insta-link">
+                        <svg class="insta-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c.796 0 1.441.645 1.441 1.44s-.645 1.44-1.441 1.44c-.795 0-1.439-.645-1.439-1.44s.644-1.44 1.439-1.44z"/>
+                        </svg>
+                        Moriteadolls
+                    </a> 
+                    for her intellectual contribution to the development of the site.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Автоматическая подстройка высоты изображения
+        function adjustImageHeight() {
+            const image = document.querySelector('.doll-face-animation');
+            const rightSide = document.querySelector('.right-side');
+            
+            if (window.innerWidth > 768) {
+                // На десктопе ограничиваем высоту изображения
+                const maxHeight = window.innerHeight * 0.6;
+                image.style.maxHeight = maxHeight + 'px';
+                
+                // Ограничиваем высоту правой части
+                if (rightSide.scrollHeight > window.innerHeight * 0.7) {
+                    rightSide.style.maxHeight = (window.innerHeight * 0.7) + 'px';
+                }
+            }
+        }
+        
+        // Вызываем при загрузке и изменении размера окна
+        window.addEventListener('load', adjustImageHeight);
+        window.addEventListener('resize', adjustImageHeight);
+        
+        // Плавный скролл внутри правой части на мобильных
+        document.querySelectorAll('.insta-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        document.querySelector('.right-side').scrollTop = 0;
+                    }, 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
