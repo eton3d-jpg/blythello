@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blythello - Hall of Fame</title>
-    <meta name="description" content="Blythello - The world of Blythe dolls. Join the Hall of Fame and become a Founding Member.">
     <link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
     <style>
         :root {
@@ -15,434 +14,122 @@
             --vip-purple: #8854d0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: var(--main-bg);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             color: var(--text-dark);
             line-height: 1.6;
-            overflow: hidden;
         }
 
         .container {
-            max-width: 1200px;
-            width: 95%;
-            max-height: 95vh;
+            max-width: 1200px; width: 95%; min-height: 80vh;
             padding: 30px 40px;
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(20px);
             border-radius: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
-            flex-shrink: 0;
         }
 
-        .logo {
-            font-size: 1.6rem;
-            font-weight: bold;
-        }
+        .logo { font-size: 1.6rem; font-weight: bold; }
+        .brand { color: var(--vip-purple); }
 
-        .brand {
-            color: var(--vip-purple);
-        }
-
-        .language-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
+        .language-selector { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .lang-btn {
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(136, 84, 208, 0.3);
             border-radius: 20px;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-dark);
+            padding: 6px 12px; font-size: 0.8rem;
+            cursor: pointer; transition: all 0.3s ease;
         }
 
-        .lang-btn:hover {
-            background: rgba(136, 84, 208, 0.1);
-            transform: translateY(-2px);
-        }
+        .lang-btn.active { background: var(--vip-purple); color: white; border-color: var(--vip-purple); }
 
-        .lang-btn.active {
-            background: var(--vip-purple);
-            color: white;
-            border-color: var(--vip-purple);
-        }
+        .content { display: flex; gap: 40px; align-items: center; flex: 1; }
 
-        .content {
-            display: flex;
-            gap: 40px;
-            align-items: center;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .left-side {
-            flex: 1;
-            min-width: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+        .left-side { flex: 1; display: flex; justify-content: center; }
 
         .doll-face-animation {
-            max-width: 100%;
-            max-height: 60vh;
-            width: auto;
-            height: auto;
-            opacity: 0;
-            filter: blur(15px);
+            max-width: 100%; max-height: 50vh;
+            opacity: 0; filter: blur(15px);
             transform: translateY(25px);
             animation: magicReveal 3.5s ease-out forwards;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             object-fit: contain;
         }
 
         @keyframes magicReveal {
-            to {
-                opacity: 1;
-                filter: blur(0);
-                transform: translateY(0);
-            }
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
         }
 
-        .right-side {
-            flex: 1.2;
-            min-width: 300px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-
-        .right-side::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .right-side::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-            border-radius: 10px;
-        }
-
-        .right-side::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
-            border-radius: 10px;
-        }
+        .right-side { flex: 1.2; display: flex; flex-direction: column; }
 
         .main-title {
-            font-size: 3rem;
-            line-height: 1.1;
-            margin: 0 0 10px 0;
-            font-weight: 900;
+            font-size: 3rem; font-weight: 900;
             background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            flex-shrink: 0;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 0 0 10px 0;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--text-gray);
-            margin: 0 0 20px 0;
-            font-weight: 300;
-            flex-shrink: 0;
-        }
+        .subtitle { font-size: 1.2rem; color: var(--text-gray); margin-bottom: 20px; }
 
         .promo-box {
-            margin: 15px 0;
-            padding: 20px;
-            border-left: 4px solid var(--accent-color);
+            padding: 20px; border-left: 4px solid var(--accent-color);
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 0 10px 10px 0;
-            flex-shrink: 0;
+            border-radius: 0 10px 10px 0; margin-bottom: 15px;
         }
 
-        .status-highlight {
-            font-size: 1.1rem;
-            color: var(--vip-purple);
-            font-weight: bold;
-            margin: 15px 0;
-            line-height: 1.5;
-        }
+        .status-highlight { color: var(--vip-purple); font-weight: bold; margin: 15px 0; }
 
         .contest-rules {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            font-style: italic;
-            background: rgba(255, 255, 255, 0.4);
-            padding: 10px 12px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-top: 10px;
-            border: 1px dashed var(--accent-color);
+            font-size: 0.85rem; color: var(--text-gray); font-style: italic;
+            border: 1px dashed var(--accent-color); padding: 8px; border-radius: 8px;
         }
 
         .email-info {
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            background: rgba(136, 84, 208, 0.08);
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 3px solid var(--vip-purple);
+            background: rgba(136, 84, 208, 0.08); padding: 12px;
+            border-radius: 8px; border-left: 3px solid var(--vip-purple); margin-top: 15px;
         }
 
-        .email-link {
-            color: var(--vip-purple);
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .email-link:hover {
-            color: #6c5ce7;
-            text-decoration: underline;
-        }
+        .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
 
         .loader-container {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 20px;
-            border-radius: 20px;
-            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.6); padding: 20px;
+            border-radius: 20px; margin: 20px 0;
             border: 2px solid rgba(255, 183, 197, 0.3);
-            flex-shrink: 0;
         }
 
-        .loader-text {
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: var(--text-dark);
-            display: block;
-            margin-bottom: 12px;
-        }
+        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 5px; margin: 10px 0; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-color), #ff8ba0); border-radius: 5px; }
 
-        .progress-bar {
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin: 12px 0;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 35%;
-            background: linear-gradient(90deg, var(--accent-color), #ff8ba0);
-            box-shadow: 0 0 10px rgba(255, 183, 197, 0.7);
-            animation: fillProgress 2s ease-in-out forwards;
-            border-radius: 5px;
-        }
-
-        @keyframes fillProgress {
-            from { width: 0; }
-            to { width: 35%; }
-        }
-
-        .percentage {
-            font-weight: bold;
-            font-size: 1rem;
-            color: var(--vip-purple);
-        }
-
-        .footer-note {
-            font-size: 0.95rem;
-            color: var(--text-dark);
-            margin: 15px 0;
-            padding: 12px;
-            background: rgba(136, 84, 208, 0.05);
-            border-radius: 10px;
-            border-left: 3px solid var(--vip-purple);
-            flex-shrink: 0;
-        }
-
-        .thanks-note {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            border-top: 1px solid rgba(0,0,0,0.1);
-            padding-top: 15px;
-            color: var(--text-gray);
-            flex-shrink: 0;
-        }
-
-        .insta-link {
-            text-decoration: none;
-            color: var(--vip-purple);
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            transition: all 0.3s ease;
-            padding: 4px 8px;
-            border-radius: 5px;
-            background: rgba(136, 84, 208, 0.1);
-        }
-
-        .insta-link:hover {
-            color: #e1306c;
-            background: rgba(225, 48, 108, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .insta-link:focus {
-            outline: 2px solid var(--vip-purple);
-            outline-offset: 2px;
-            border-radius: 2px;
-        }
-
-        .insta-icon {
-            width: 16px;
-            height: 16px;
-            margin-right: 6px;
-            fill: currentColor;
-            vertical-align: middle;
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                max-height: 98vh;
-                padding: 25px 30px;
-            }
-            
-            .content {
-                gap: 30px;
-            }
-            
-            .main-title {
-                font-size: 2.5rem;
-            }
-            
-            .doll-face-animation {
-                max-height: 50vh;
-            }
-        }
+        .thanks-note { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); color: var(--text-gray); font-size: 0.85rem; }
+        .insta-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
 
         @media (max-width: 768px) {
-            body {
-                overflow: auto;
-                padding: 10px;
-            }
-            
-            .container {
-                max-height: none;
-                height: auto;
-                overflow: visible;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: center;
-            }
-            
-            .language-selector {
-                justify-content: center;
-            }
-            
-            .content {
-                flex-direction: column;
-                overflow: visible;
-            }
-            
-            .right-side {
-                overflow-y: visible;
-                padding-right: 0;
-                height: auto;
-            }
-            
-            .left-side {
-                max-height: 40vh;
-            }
-            
-            .doll-face-animation {
-                max-height: 40vh;
-            }
-            
-            .main-title {
-                font-size: 2.2rem;
-                text-align: center;
-            }
-            
-            .subtitle {
-                text-align: center;
-            }
-            
-            .promo-box {
-                border-left: none;
-                border-top: 3px solid var(--accent-color);
-                border-radius: 10px;
-                margin: 15px 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-                width: 98%;
-                border-radius: 30px;
-            }
-            
-            .main-title {
-                font-size: 1.8rem;
-            }
-            
-            .subtitle {
-                font-size: 1rem;
-            }
-            
-            .logo {
-                font-size: 1.4rem;
-                text-align: center;
-            }
-            
-            .language-selector {
-                gap: 5px;
-            }
-            
-            .lang-btn {
-                padding: 5px 10px;
-                font-size: 0.75rem;
-            }
+            .container { height: auto; padding: 20px; }
+            .content { flex-direction: column; }
+            .main-title { font-size: 2.2rem; text-align: center; }
+            .subtitle { text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo">
-                <span class="brand">Blythello</span>.com
-            </div>
+            <div class="logo"><span class="brand">Blythello</span>.com</div>
             <div class="language-selector">
                 <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="ru">RU</button>
                 <button class="lang-btn" data-lang="de">DE</button>
                 <button class="lang-btn" data-lang="fr">FR</button>
                 <button class="lang-btn active" data-lang="ja">JA</button>
@@ -451,11 +138,7 @@
 
         <main class="content">
             <div class="left-side">
-                <img src="Gemini_Generated_Image_mce530mce530mce5.png" 
-                     alt="Blythe doll face with geometric patterns - minimalist art style" 
-                     class="doll-face-animation"
-                     width="400" 
-                     height="500">
+                <img src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
             </div>
 
             <div class="right-side">
@@ -463,44 +146,24 @@
                 <p class="subtitle" data-key="subtitle">ブライスの世界が間もなく登場します。</p>
                 
                 <div class="promo-box">
-                    <p data-key="promo1">Instagramにアクセスし、<strong>@moriteradolls</strong>にウェブサイトについての感想を尋ね、その返信のスクリーンショットを送ってください。</p>
-                    
-                    <p class="status-highlight" data-key="promo2">これにより、<strong>創設メンバー</strong>ステータスのプロモーションに参加し、私たちの<strong>'殿堂'</strong>に永遠に名を刻むことができます！</p>
-                    
-                    <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。スクリーンショットを提出すると、永久に抽選対象となります。</p>
+                    <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
+                    <p class="status-highlight" data-key="promo2">これにより、創設メンバーとして「殿堂」に名を刻むことができます！</p>
+                    <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
                     
                     <div class="email-info">
-                        <strong data-key="emailTitle">スクリーンショット、ご要望、ご提案を以下へお送りください：</strong><br>
+                        <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
                         <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
                     </div>
                 </div>
 
                 <div class="loader-container">
                     <span class="loader-text" data-key="loading">近日公開...</span>
-                    <div class="progress-bar" 
-                         role="progressbar" 
-                         aria-valuenow="35" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100" 
-                         aria-label="Website launch progress">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <span class="percentage">35%</span>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
                 </div>
 
-                <p class="footer-note" data-key="footer">最初から私たちと一緒にいてください。私たちはブライス人形コミュニティへのまったく新しいアプローチを準備しています。</p>
-                
                 <div class="thanks-note">
                     <span data-key="thanks">サイト運営者は</span> 
-                    <a href="https://instagram.com/moriteradolls" 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       class="insta-link">
-                        <svg class="insta-icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c.796 0 1.441.645 1.441 1.44s-.645 1.44-1.441 1.44c-.795 0-1.439-.645-1.439-1.44s.644-1.44 1.439-1.44z"/>
-                        </svg>
-                        Moriteradolls
-                    </a> 
+                    <a href="https://instagram.com/moriteradolls" target="_blank" class="insta-link">@**riteradolls</a> 
                     <span data-key="thanks2">の知的貢献に感謝いたします。</span>
                 </div>
             </div>
@@ -508,153 +171,65 @@
     </div>
 
     <script>
-        // Переводы для всех языков
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
                 subtitle: "The world of Blythe is coming soon.",
-                promo1: "Go to Instagram, ask <strong>@moriteradolls</strong> what she thinks about the website, and send us a screenshot of her reply.",
-                promo2: "By doing this, you can participate in the promotion for <strong>Founding Member status</strong> and enter our <strong>'Hall of Fame'</strong> forever!",
-                rules: "One participant is chosen every 24 hours. Once you submit your screenshot, you stay in the draw permanently.",
-                emailTitle: "Send your screenshots, wishes or suggestions to:",
+                promo1: "Go to Instagram, find <strong>@**riteradolls</strong> and send the full name to our email.",
+                promo2: "By doing this, you can become a <strong>Founding Member</strong> and enter our 'Hall of Fame'!",
+                rules: "One participant is chosen every 24 hours.",
+                emailTitle: "Send the full name and suggestions to:",
                 loading: "LAUNCHING SOON...",
-                footer: "Be with us from the very beginning. We are preparing a completely new approach to the Blythe doll community.",
                 thanks: "The site administration thanks",
-                thanks2: "for her intellectual contribution to the development of the site."
-            },
-            ru: {
-                title: "МЫ ПОЧТИ ГОТОВЫ!",
-                subtitle: "Мир Блайт скоро появится.",
-                promo1: "Перейдите в Instagram, спросите у <strong>@moriteradolls</strong>, что она думает о сайте, и пришлите нам скриншот ее ответа.",
-                promo2: "Таким образом, вы можете участвовать в акции по получению статуса <strong>Основателя</strong> и навсегда войти в нашу <strong>'Зал Славы'</strong>!",
-                rules: "Один участник выбирается каждые 24 часа. Как только вы отправите свой скриншот, вы остаетесь в розыгрыше навсегда.",
-                emailTitle: "Отправляйте скриншоты, пожелания или предложения на:",
-                loading: "СКОРО ЗАПУСК...",
-                footer: "Будьте с нами с самого начала. Мы готовим совершенно новый подход к сообществу кукол Блайт.",
-                thanks: "Администрация сайта благодарит",
-                thanks2: "за её интеллектуальный вклад в развитие сайта."
+                thanks2: "for her intellectual contribution."
             },
             de: {
                 title: "WIR SIND FAST FERTIG!",
                 subtitle: "Die Welt von Blythe kommt bald.",
-                promo1: "Gehen Sie zu Instagram, fragen Sie <strong>@moriteradolls</strong>, was sie von der Website hält, und senden Sie uns einen Screenshot ihrer Antwort.",
-                promo2: "Auf diese Weise können Sie an der Aktion für den Status <strong>Gründungsmitglied</strong> teilnehmen und für immer in unsere <strong>'Hall of Fame'</strong> aufgenommen werden!",
-                rules: "Ein Teilnehmer wird alle 24 Stunden ausgewählt. Sobald Sie Ihren Screenshot einreichen, bleiben Sie dauerhaft in der Auswahl.",
-                emailTitle: "Senden Sie Ihre Screenshots, Wünsche oder Vorschläge an:",
+                promo1: "Gehen Sie zu Instagram, finden Sie <strong>@**riteradolls</strong> und senden Sie den vollständigen Namen an unsere E-Mail.",
+                promo2: "So können Sie <strong>Gründungsmitglied</strong> werden und in unsere 'Hall of Fame' eingehen!",
+                rules: "Alle 24 Stunden wird ein Teilnehmer ausgewählt.",
+                emailTitle: "Senden Sie den Namen und Vorschläge an:",
                 loading: "START BALD...",
-                footer: "Seien Sie von Anfang an dabei. Wir bereiten einen völlig neuen Ansatz für die Blythe-Puppen-Community vor.",
                 thanks: "Die Website-Verwaltung dankt",
-                thanks2: "für ihren intellektuellen Beitrag zur Entwicklung der Website."
+                thanks2: "für ihren intellektuellen Beitrag."
             },
             fr: {
-                title: "NOUS SOMMES PRESQUE PRÊTS !",
+                title: "NOUS SOMMES PRÊTS !",
                 subtitle: "Le monde de Blythe arrive bientôt.",
-                promo1: "Rendez-vous sur Instagram, demandez à <strong>@moriteradolls</strong> ce qu'elle pense du site web, et envoyez-nous une capture d'écran de sa réponse.",
-                promo2: "En faisant cela, vous pouvez participer à la promotion pour le statut de <strong>Membre Fondateur</strong> et entrer dans notre <strong>'Hall of Fame'</strong> pour toujours !",
-                rules: "Un participant est choisi toutes les 24 heures. Une fois que vous soumettez votre capture d'écran, vous restez dans le tirage au sort de manière permanente.",
-                emailTitle: "Envoyez vos captures d'écran, souhaits ou suggestions à :",
+                promo1: "Allez sur Instagram, trouvez <strong>@**riteradolls</strong> et envoyez le nom complet à notre e-mail.",
+                promo2: "Devenez un <strong>Membre Fondateur</strong> et entrez dans notre 'Hall of Fame' !",
+                rules: "Un participant est choisi toutes les 24 heures.",
+                emailTitle: "Envoyez le nom et les suggestions à :",
                 loading: "LANCEMENT BIENTÔT...",
-                footer: "Soyez avec nous dès le début. Nous préparons une approche complètement nouvelle de la communauté de poupées Blythe.",
                 thanks: "L'administration du site remercie",
-                thanks2: "pour sa contribution intellectuelle au développement du site."
+                thanks2: "pour sa contribution intellectuelle."
             },
             ja: {
                 title: "もうすぐ準備完了です！",
                 subtitle: "ブライスの世界が間もなく登場します。",
-                promo1: "Instagramにアクセスし、<strong>@moriteradolls</strong>にウェブサイトについての感想を尋ね、その返信のスクリーンショットを送ってください。",
-                promo2: "これにより、<strong>創設メンバー</strong>ステータスのプロモーションに参加し、私たちの<strong>'殿堂'</strong>に永遠に名を刻むことができます！",
-                rules: "24時間ごとに1名の参加者が選ばれます。スクリーンショットを提出すると、永久に抽選対象となります。",
-                emailTitle: "スクリーンショット、ご要望、ご提案を以下へお送りください：",
+                promo1: "Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。",
+                promo2: "これにより、<strong>創設メンバー</strong>として「殿堂」に名を刻むことができます！",
+                rules: "24時間ごとに1名の参加者が選ばれます。",
+                emailTitle: "フルネームとご提案をこちらまで：",
                 loading: "近日公開...",
-                footer: "最初から私たちと一緒にいてください。私たちはブライス人形コミュニティへのまったく新しいアプローチを準備しています。",
                 thanks: "サイト運営者は",
                 thanks2: "の知的貢献に感謝いたします。"
             }
         };
 
-        // Устанавливаем японский как язык по умолчанию
-        let currentLang = 'ja';
-
-        // Функция смены языка
         function changeLanguage(lang) {
-            currentLang = lang;
-            
-            // Обновляем активную кнопку
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.lang === lang) {
-                    btn.classList.add('active');
-                }
+                btn.classList.toggle('active', btn.dataset.lang === lang);
             });
-            
-            // Обновляем атрибут lang у html
-            document.documentElement.lang = lang;
-            
-            // Обновляем все тексты с атрибутом data-key
-            document.querySelectorAll('[data-key]').forEach(element => {
-                const key = element.getAttribute('data-key');
-                if (translations[lang][key]) {
-                    if (element.tagName === 'STRONG') {
-                        // Для элементов strong обновляем только текст между тегами
-                        const translation = translations[lang][key];
-                        const startTag = element.innerHTML.match(/^<strong>/)?.[0] || '';
-                        const endTag = element.innerHTML.match(/<\/strong>$/)?.[0] || '';
-                        element.innerHTML = startTag + translation.replace(/<strong>|<\/strong>/g, '') + endTag;
-                    } else if (key === 'promo1' || key === 'promo2') {
-                        // Для промо-текстов с strong тегами
-                        element.innerHTML = translations[lang][key];
-                    } else {
-                        // Для обычного текста
-                        element.textContent = translations[lang][key];
-                    }
-                }
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang][key]) el.innerHTML = translations[lang][key];
             });
-            
-            // Сохраняем язык в localStorage
-            localStorage.setItem('blythello_lang', lang);
         }
 
-        // Инициализация при загрузке - всегда японский
-        document.addEventListener('DOMContentLoaded', () => {
-            // Принудительно устанавливаем японский язык
-            localStorage.setItem('blythello_lang', 'ja');
-            changeLanguage('ja');
-            
-            // Назначаем обработчики на кнопки выбора языка
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const lang = btn.dataset.lang;
-                    changeLanguage(lang);
-                });
-            });
-        });
-
-        // Автоматическая подстройка высоты изображения
-        function adjustImageHeight() {
-            const image = document.querySelector('.doll-face-animation');
-            const rightSide = document.querySelector('.right-side');
-            
-            if (window.innerWidth > 768) {
-                const maxHeight = window.innerHeight * 0.6;
-                image.style.maxHeight = maxHeight + 'px';
-                
-                if (rightSide.scrollHeight > window.innerHeight * 0.7) {
-                    rightSide.style.maxHeight = (window.innerHeight * 0.7) + 'px';
-                }
-            }
-        }
-        
-        window.addEventListener('load', adjustImageHeight);
-        window.addEventListener('resize', adjustImageHeight);
-        
-        document.querySelectorAll('.insta-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    setTimeout(() => {
-                        document.querySelector('.right-side').scrollTop = 0;
-                    }, 100);
-                }
-            });
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
         });
     </script>
 </body>
