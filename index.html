@@ -17,6 +17,9 @@
 
         * { box-sizing: border-box; }
 
+        /* ============================================================
+           DESKTOP (оригинальный стиль — не изменён)
+        ============================================================ */
         body {
             margin: 0; padding: 10px;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -48,7 +51,6 @@
             overflow: hidden;
         }
 
-        /* Боковая панель Hall of Fame */
         .hall-of-fame-sidebar {
             flex: 0 0 280px;
             background: rgba(255, 255, 255, 0.5);
@@ -61,7 +63,6 @@
             overflow-y: auto;
         }
 
-        /* Левая вертикальная рамка */
         .left-info-sidebar {
             flex: 0 0 50px;
             border: 3px solid #badc58;
@@ -111,7 +112,6 @@
             height: 100%;
         }
 
-        /* ИСПРАВЛЕНО: добавлен CSS transition для плавного скрытия/показа */
         .doll-face-animation {
             max-width: 100%;
             max-height: 55vh;
@@ -131,6 +131,7 @@
         }
 
         .right-side { flex: 1.5; display: flex; flex-direction: column; justify-content: center; }
+
         .main-title {
             font-size: 1.8rem; font-weight: 900;
             background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
@@ -151,71 +152,27 @@
         .contest-rules { font-size: 0.8rem; color: var(--text-gray); font-style: italic; border: 1px dashed var(--accent-color); padding: 5px; border-radius: 8px; }
 
         .email-info { background: rgba(136, 84, 208, 0.08); padding: 10px; border-radius: 8px; border-left: 3px solid var(--vip-purple); margin-top: 10px; }
-        .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
+        .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; word-break: break-all; }
 
-        /* ИСПРАВЛЕНО: прогресс-блок с числом 37% */
-        .loader-container {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 10px 12px;
-            border-radius: 20px;
-            margin: 10px 0;
-        }
+        .loader-container { background: rgba(255, 255, 255, 0.6); padding: 10px 12px; border-radius: 20px; margin: 10px 0; }
+        .loader-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .loader-text { font-size: 0.8rem; color: var(--text-gray); font-weight: 600; letter-spacing: 0.5px; }
+        .loader-percent { font-size: 0.95rem; font-weight: 900; color: var(--vip-purple); }
 
-        .loader-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .loader-text {
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .loader-percent {
-            font-size: 0.95rem;
-            font-weight: 900;
-            color: var(--vip-purple);
-        }
-
-        .progress-bar {
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
+        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 10px; overflow: hidden; }
         .progress-fill {
-            height: 100%;
-            width: 0%;
+            height: 100%; width: 0%;
             background: linear-gradient(90deg, var(--accent-color), #c56cf0, #8854d0);
             border-radius: 10px;
             transition: width 1.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
+        .progress-fill.animated { width: 37%; }
 
-        .progress-fill.animated {
-            width: 37%;
-        }
-
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.65rem;
-            color: #b2bec3;
-        }
-
-        .progress-steps span.done {
-            color: var(--vip-purple);
-            font-weight: bold;
-        }
+        .progress-steps { display: flex; justify-content: space-between; margin-top: 5px; font-size: 0.65rem; color: #b2bec3; }
+        .progress-steps span.done { color: var(--vip-purple); font-weight: bold; }
 
         .thanks-note { margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); color: var(--text-gray); font-size: 0.75rem; }
 
-        /* Hall of Fame стили */
         .sidebar-title { color: #d63031; font-weight: bold; font-size: 1rem; margin-bottom: 15px; line-height: 1.2; }
         .winner-list { list-style: none; padding: 0; margin: 0; }
         .winner-item { font-size: 0.95rem; font-weight: bold; color: var(--vip-purple); padding-bottom: 8px; border-bottom: 2px solid #d63031; display: flex; justify-content: space-between; margin-bottom: 8px; }
@@ -227,6 +184,108 @@
         .btn-like:disabled { opacity: 0.5; cursor: default; }
         .btn-next { background: var(--vip-purple); color: white; }
         .btn-next:hover { background: #7341c0; }
+
+        /* ============================================================
+           TABLET  769px – 1024px
+           Убираем левую рамку, немного сжимаем сайдбар
+        ============================================================ */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .left-info-sidebar { display: none; }
+            .hall-of-fame-sidebar { flex: 0 0 220px; }
+            .main-title { font-size: 1.5rem; }
+        }
+
+        /* ============================================================
+           MOBILE  ≤ 768px
+           Полностью переопределяем layout, десктоп не затрагиваем
+        ============================================================ */
+        @media (max-width: 768px) {
+
+            /* Сброс desktop-фиксированного поведения */
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+                overflow-x: hidden;
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .wrapper {
+                flex-direction: column;
+                height: auto;
+                gap: 10px;
+            }
+
+            /* Левая вертикальная рамка — скрыта */
+            .left-info-sidebar { display: none; }
+
+            /* Основной блок */
+            .container {
+                border-radius: 24px;
+                padding: 14px 16px;
+                overflow: visible;
+                height: auto;
+            }
+
+            /* Контент — вертикально */
+            .content {
+                flex-direction: column;
+                gap: 14px;
+                overflow: visible;
+                height: auto;
+                align-items: stretch;
+            }
+
+            .left-side {
+                height: auto;
+                width: 100%;
+            }
+
+            /* Фото — компактное */
+            .doll-face-animation {
+                max-height: 44vw;
+                width: auto;
+                max-width: 100%;
+            }
+
+            .gallery-nav { justify-content: center; }
+
+            .right-side {
+                justify-content: flex-start;
+                overflow: visible;
+            }
+
+            .main-title { font-size: 1.25rem; }
+            .subtitle   { font-size: 0.88rem; margin-bottom: 10px; }
+            .promo-box  { font-size: 0.84rem; padding: 12px; margin-bottom: 8px; }
+            .loader-container { margin: 8px 0; }
+            .progress-steps   { font-size: 0.6rem; }
+            .thanks-note      { margin-top: 10px; font-size: 0.72rem; }
+
+            /* Hall of Fame — горизонтальная полоса снизу */
+            .hall-of-fame-sidebar {
+                flex: none;
+                width: 100%;
+                max-height: 220px;
+                border-radius: 20px;
+                padding: 14px 16px;
+            }
+
+            .sidebar-title  { font-size: 0.88rem; margin-bottom: 8px; }
+            .winner-item    { font-size: 0.85rem; }
+        }
+
+        /* ============================================================
+           SMALL PHONES  ≤ 400px
+        ============================================================ */
+        @media (max-width: 400px) {
+            .main-title  { font-size: 1.05rem; }
+            .promo-box   { font-size: 0.78rem; }
+            .btn-gallery { padding: 6px 11px; font-size: 0.78rem; }
+            .doll-face-animation { max-height: 52vw; }
+            .lang-btn    { padding: 3px 7px; font-size: 0.68rem; }
+        }
     </style>
 </head>
 <body>
@@ -253,8 +312,8 @@
                 <div class="left-side">
                     <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
                     <div class="gallery-nav" id="gallery-controls">
-                        <button id="like-btn" class="btn-gallery btn-like" data-key="like">❤️ Like</button>
-                        <button id="next-btn" class="btn-gallery btn-next" data-key="next">Next ✨</button>
+                        <button id="like-btn" class="btn-gallery btn-like" data-key="like">❤️ いいね</button>
+                        <button id="next-btn" class="btn-gallery btn-next" data-key="next">次へ ✨</button>
                     </div>
                 </div>
 
@@ -266,14 +325,12 @@
                         <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
                         <p class="status-highlight" data-key="promo2">これにより、<strong>創設メンバー</strong>として「殿堂」に名を刻むことができます！</p>
                         <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
-
                         <div class="email-info">
                             <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
                             <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
                         </div>
                     </div>
 
-                    <!-- ИСПРАВЛЕНО: прогресс-бар с 37% и метками этапов -->
                     <div class="loader-container">
                         <div class="loader-header">
                             <span class="loader-text" data-key="loading">近日公開...</span>
@@ -283,10 +340,10 @@
                             <div class="progress-fill" id="progress-fill"></div>
                         </div>
                         <div class="progress-steps">
-                            <span class="done" data-key="step1">✓ Design</span>
-                            <span class="done" data-key="step2">✓ Backend</span>
-                            <span data-key="step3">⧖ Content</span>
-                            <span data-key="step4">○ Launch</span>
+                            <span class="done" data-key="step1">✓ デザイン</span>
+                            <span class="done" data-key="step2">✓ バックエンド</span>
+                            <span data-key="step3">⧖ コンテンツ</span>
+                            <span data-key="step4">○ 公開</span>
                         </div>
                     </div>
 
@@ -376,25 +433,25 @@
 
         let currentLang = 'ja';
         let imageList = [];
-        const img = document.getElementById('main-photo');
-        const nav = document.getElementById('gallery-controls');
+        const img        = document.getElementById('main-photo');
+        const nav        = document.getElementById('gallery-controls');
         const leftBanner = document.getElementById('left-banner');
-        const likeBtn = document.getElementById('like-btn');
-        const nextBtn = document.getElementById('next-btn');
+        const likeBtn    = document.getElementById('like-btn');
+        const nextBtn    = document.getElementById('next-btn');
         const progressFill = document.getElementById('progress-fill');
 
-        // Синхронизация высоты левой панели с высотой фото
+        function isMobile() { return window.innerWidth <= 768; }
+
         function syncBannerHeight() {
-            leftBanner.style.height = img.offsetHeight + 'px';
+            if (!isMobile()) leftBanner.style.height = img.offsetHeight + 'px';
         }
 
-        // ИСПРАВЛЕНО: получение списка изображений из файла
         async function fetchImageList() {
             try {
                 const response = await fetch('FG/1.txt');
                 if (!response.ok) throw new Error('File not found');
                 const text = await response.text();
-                imageList = text.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
+                imageList = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
                 if (imageList.length > 0) getNewPhoto();
             } catch (err) {
                 console.warn('Could not load FG/1.txt — gallery disabled:', err.message);
@@ -402,30 +459,19 @@
         }
 
         function getNewPhoto() {
-            if (imageList.length === 0) return;
+            if (!imageList.length) return;
             const randomName = imageList[Math.floor(Math.random() * imageList.length)];
-            const fileName = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
-            const path = 'FG/' + fileName;
+            const fileName   = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
+            const path       = 'FG/' + fileName;
 
-            // ИСПРАВЛЕНО: opacity через transition (задан в CSS), а не только через setAttribute
             img.style.opacity = '0';
-
             setTimeout(() => {
                 img.src = path;
-                img.onload = () => {
-                    img.style.opacity = '1';
-                    syncBannerHeight();
-                };
-                img.onerror = () => {
-                    // Если фото не загрузилось — показываем fallback
-                    img.style.opacity = '1';
-                };
+                img.onload  = () => { img.style.opacity = '1'; syncBannerHeight(); };
+                img.onerror = () => { img.style.opacity = '1'; };
 
-                // ИСПРАВЛЕНО: сохранение и проверка лайков реализована полностью
                 let savedLikes = [];
-                try {
-                    savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
-                } catch (e) { savedLikes = []; }
+                try { savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]'); } catch (e) {}
 
                 likeBtn.disabled = savedLikes.includes(path);
                 likeBtn.dataset.currentPath = path;
@@ -433,7 +479,6 @@
             }, 500);
         }
 
-        // ИСПРАВЛЕНО: обработчик лайка теперь реально сохраняет
         likeBtn.addEventListener('click', () => {
             const path = likeBtn.dataset.currentPath;
             if (!path || likeBtn.disabled) return;
@@ -443,7 +488,7 @@
                     savedLikes.push(path);
                     localStorage.setItem('blythello_likes', JSON.stringify(savedLikes));
                 }
-            } catch (e) { console.warn('localStorage unavailable'); }
+            } catch (e) {}
             likeBtn.disabled = true;
             updateLabels();
         });
@@ -461,38 +506,27 @@
             );
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (translations[lang] && translations[lang][key] !== undefined) {
-                    el.innerHTML = translations[lang][key];
-                }
+                if (translations[lang]?.[key] !== undefined) el.innerHTML = translations[lang][key];
             });
             updateLabels();
         }
 
         nextBtn.addEventListener('click', getNewPhoto);
+        document.querySelectorAll('.lang-btn').forEach(btn =>
+            btn.addEventListener('click', () => changeLanguage(btn.dataset.lang))
+        );
 
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
-        });
-
-        // ИСПРАВЛЕНО: анимация прогресс-бара через requestAnimationFrame после загрузки
         function animateProgress() {
-            // Небольшая задержка чтобы transition успел примениться
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    progressFill.classList.add('animated');
-                });
-            });
+            requestAnimationFrame(() => requestAnimationFrame(() => progressFill.classList.add('animated')));
         }
 
         window.addEventListener('load', () => {
             animateProgress();
-            changeLanguage('ja'); // Инициализация: применяем японский язык ко всем элементам
-
+            changeLanguage('ja');
             setTimeout(() => {
                 nav.style.opacity = '1';
-                leftBanner.style.opacity = '1';
+                if (!isMobile()) leftBanner.style.opacity = '1';
                 fetchImageList();
-                // Синхронизация после показа, если фото уже загружено
                 if (img.complete && img.naturalHeight > 0) syncBannerHeight();
             }, 2500);
         });
