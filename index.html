@@ -12,12 +12,13 @@
             --text-dark: #2d3436;
             --text-gray: #636e72;
             --vip-purple: #8854d0;
+            --fame-gold: #f1c40f; /* Цвет для рамки Зала Славы */
         }
 
         * { box-sizing: border-box; }
 
         body {
-            margin: 0; padding: 0;
+            margin: 0; padding: 20px;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: var(--main-bg);
             min-height: 100vh;
@@ -26,8 +27,17 @@
             line-height: 1.6;
         }
 
+        /* Главная обертка для разделения контента и боковой панели */
+        .wrapper {
+            display: flex;
+            gap: 20px;
+            max-width: 1400px;
+            width: 100%;
+            align-items: stretch;
+        }
+
         .container {
-            max-width: 1200px; width: 95%; min-height: 80vh;
+            flex: 3;
             padding: 30px 40px;
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(20px);
@@ -36,6 +46,52 @@
             display: flex; flex-direction: column;
         }
 
+        /* Боковая панель (Желтая рамка) */
+        .hall-of-fame-sidebar {
+            flex: 1;
+            min-width: 280px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            border: 4px solid var(--fame-gold); /* Та самая желтая рамка */
+            border-radius: 25px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-title {
+            color: #d63031; /* Красный текст как на скриншоте */
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .winner-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .winner-item {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--vip-purple);
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d63031; /* Линия под именем */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .winner-date {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            font-weight: normal;
+        }
+
+        /* Остальные стили */
         .header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
@@ -61,28 +117,27 @@
         .left-side { flex: 1; display: flex; justify-content: center; }
 
         .doll-face-animation {
-            max-width: 100%; max-height: 50vh;
-            opacity: 0; filter: blur(15px);
-            transform: translateY(25px);
-            animation: magicReveal 3.5s ease-out forwards;
+            max-width: 100%; max-height: 45vh;
             border-radius: 15px;
             object-fit: contain;
+            animation: magicReveal 2s ease-out forwards;
         }
 
         @keyframes magicReveal {
+            from { opacity: 0; filter: blur(10px); transform: translateY(10px); }
             to { opacity: 1; filter: blur(0); transform: translateY(0); }
         }
 
-        .right-side { flex: 1.2; display: flex; flex-direction: column; }
+        .right-side { flex: 1.5; display: flex; flex-direction: column; }
 
         .main-title {
-            font-size: 3rem; font-weight: 900;
+            font-size: 2.5rem; font-weight: 900;
             background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin: 0 0 10px 0;
         }
 
-        .subtitle { font-size: 1.2rem; color: var(--text-gray); margin-bottom: 20px; }
+        .subtitle { font-size: 1.1rem; color: var(--text-gray); margin-bottom: 20px; }
 
         .promo-box {
             padding: 20px; border-left: 4px solid var(--accent-color);
@@ -90,7 +145,7 @@
             border-radius: 0 10px 10px 0; margin-bottom: 15px;
         }
 
-        .status-highlight { color: var(--vip-purple); font-weight: bold; margin: 15px 0; }
+        .status-highlight { color: var(--vip-purple); font-weight: bold; margin: 10px 0; }
 
         .contest-rules {
             font-size: 0.85rem; color: var(--text-gray); font-style: italic;
@@ -105,69 +160,87 @@
         .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
 
         .loader-container {
-            background: rgba(255, 255, 255, 0.6); padding: 20px;
-            border-radius: 20px; margin: 20px 0;
+            background: rgba(255, 255, 255, 0.6); padding: 15px;
+            border-radius: 20px; margin: 15px 0;
             border: 2px solid rgba(255, 183, 197, 0.3);
         }
 
-        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 5px; margin: 10px 0; overflow: hidden; position: relative; }
+        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 5px; margin: 10px 0; overflow: hidden; }
         .progress-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-color), #ff8ba0); border-radius: 5px; }
 
-        .thanks-note { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1); color: var(--text-gray); font-size: 0.85rem; }
+        .thanks-note { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); color: var(--text-gray); font-size: 0.8rem; }
         .insta-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
 
-        @media (max-width: 768px) {
-            .container { height: auto; padding: 20px; }
-            .content { flex-direction: column; }
-            .main-title { font-size: 2.2rem; text-align: center; }
-            .subtitle { text-align: center; }
+        /* Адаптивность для мобилок */
+        @media (max-width: 992px) {
+            .wrapper { flex-direction: column; }
+            .container { order: 1; }
+            .hall-of-fame-sidebar { order: 2; width: 100%; }
+            .content { flex-direction: column; text-align: center; }
+            .right-side { align-items: center; }
+            .promo-box { border-left: none; border-top: 4px solid var(--accent-color); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo"><span class="brand">Blythello</span>.com</div>
-            <div class="language-selector">
-                <button class="lang-btn" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="de">DE</button>
-                <button class="lang-btn" data-lang="fr">FR</button>
-                <button class="lang-btn active" data-lang="ja">JA</button>
-            </div>
-        </div>
 
-        <main class="content">
-            <div class="left-side">
-                <img src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
+    <div class="wrapper">
+        <div class="container">
+            <div class="header">
+                <div class="logo"><span class="brand">Blythello</span>.com</div>
+                <div class="language-selector">
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="de">DE</button>
+                    <button class="lang-btn" data-lang="fr">FR</button>
+                    <button class="lang-btn active" data-lang="ja">JA</button>
+                </div>
             </div>
 
-            <div class="right-side">
-                <h1 class="main-title" data-key="title">もうすぐ準備完了です！</h1>
-                <p class="subtitle" data-key="subtitle">ブライスの世界が間もなく登場します。</p>
-                
-                <div class="promo-box">
-                    <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
-                    <p class="status-highlight" data-key="promo2">これにより、創設メンバーとして「殿堂」に名を刻むことができます！</p>
-                    <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
+            <main class="content">
+                <div class="left-side">
+                    <img src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
+                </div>
+
+                <div class="right-side">
+                    <h1 class="main-title" data-key="title">もうすぐ準備完了です！</h1>
+                    <p class="subtitle" data-key="subtitle">ブライスの世界が間もなく登場します。</p>
                     
-                    <div class="email-info">
-                        <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
-                        <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
+                    <div class="promo-box">
+                        <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
+                        <p class="status-highlight" data-key="promo2">これにより、創設メンバーとして「殿堂」に名を刻むことができます！</p>
+                        <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
+                        
+                        <div class="email-info">
+                            <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
+                            <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
+                        </div>
+                    </div>
+
+                    <div class="loader-container">
+                        <span class="loader-text" data-key="loading">近日公開...</span>
+                        <div class="progress-bar"><div class="progress-fill"></div></div>
+                    </div>
+
+                    <div class="thanks-note">
+                        <span data-key="thanks">サイト運営者は</span> 
+                        <a href="https://instagram.com/moriteradolls" target="_blank" class="insta-link">@**riteradolls</a> 
+                        <span data-key="thanks2">の知的貢献に感謝いたします。</span>
                     </div>
                 </div>
+            </main>
+        </div>
 
-                <div class="loader-container">
-                    <span class="loader-text" data-key="loading">近日公開...</span>
-                    <div class="progress-bar"><div class="progress-fill"></div></div>
-                </div>
-
-                <div class="thanks-note">
-                    <span data-key="thanks">サイト運営者は</span> 
-                    <a href="https://instagram.com/moriteradolls" target="_blank" class="insta-link">@**riteradolls</a> 
-                    <span data-key="thanks2">の知的貢献に感謝いたします。</span>
-                </div>
+        <aside class="hall-of-fame-sidebar">
+            <div class="sidebar-title" data-key="sidebarTitle">
+                Those who have been with us since the first days
             </div>
-        </main>
+            <ul class="winner-list">
+                <li class="winner-item">
+                    <span>1. @ne0vdarks</span>
+                    <span class="winner-date">20.02.2026</span>
+                </li>
+                </ul>
+        </aside>
     </div>
 
     <script>
@@ -181,29 +254,8 @@
                 emailTitle: "Send the full name and suggestions to:",
                 loading: "LAUNCHING SOON...",
                 thanks: "The site administration thanks",
-                thanks2: "for her intellectual contribution."
-            },
-            de: {
-                title: "WIR SIND FAST FERTIG!",
-                subtitle: "Die Welt von Blythe kommt bald.",
-                promo1: "Gehen Sie zu Instagram, finden Sie <strong>@**riteradolls</strong> und senden Sie den vollständigen Namen an unsere E-Mail.",
-                promo2: "So können Sie <strong>Gründungsmitglied</strong> werden und in unsere 'Hall of Fame' eingehen!",
-                rules: "Alle 24 Stunden wird ein Teilnehmer ausgewählt.",
-                emailTitle: "Senden Sie den Namen und Vorschläge an:",
-                loading: "START BALD...",
-                thanks: "Die Website-Verwaltung dankt",
-                thanks2: "für ihren intellektuellen Beitrag."
-            },
-            fr: {
-                title: "NOUS SOMMES PRÊTS !",
-                subtitle: "Le monde de Blythe arrive bientôt.",
-                promo1: "Allez sur Instagram, trouvez <strong>@**riteradolls</strong> et envoyez le nom complet à notre e-mail.",
-                promo2: "Devenez un <strong>Membre Fondateur</strong> et entrez dans notre 'Hall of Fame' !",
-                rules: "Un participant est choisi toutes les 24 heures.",
-                emailTitle: "Envoyez le nom et les suggestions à :",
-                loading: "LANCEMENT BIENTÔT...",
-                thanks: "L'administration du site remercie",
-                thanks2: "pour sa contribution intellectuelle."
+                thanks2: "for her intellectual contribution.",
+                sidebarTitle: "Those who have been with us since the first days"
             },
             ja: {
                 title: "もうすぐ準備完了です！",
@@ -214,8 +266,10 @@
                 emailTitle: "フルネームとご提案をこちらまで：",
                 loading: "近日公開...",
                 thanks: "サイト運営者は",
-                thanks2: "の知的貢献に感謝いたします。"
+                thanks2: "の知的貢献に感謝いたします。",
+                sidebarTitle: "初期から私たちを支えてくれている方々"
             }
+            // Другие языки можно добавить по аналогии
         };
 
         function changeLanguage(lang) {
@@ -224,7 +278,9 @@
             });
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (translations[lang][key]) el.innerHTML = translations[lang][key];
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
             });
         }
 
