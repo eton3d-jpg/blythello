@@ -12,7 +12,7 @@
             --text-dark: #2d3436;
             --text-gray: #636e72;
             --vip-purple: #8854d0;
-            --fame-gold: #f1c40f; /* Цвет для рамки Зала Славы */
+            --fame-gold: #f1c40f;
         }
 
         * { box-sizing: border-box; }
@@ -27,7 +27,6 @@
             line-height: 1.6;
         }
 
-        /* Главная обертка для разделения контента и боковой панели */
         .wrapper {
             display: flex;
             gap: 20px;
@@ -46,13 +45,12 @@
             display: flex; flex-direction: column;
         }
 
-        /* Боковая панель (Желтая рамка) */
         .hall-of-fame-sidebar {
             flex: 1;
             min-width: 280px;
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(20px);
-            border: 4px solid var(--fame-gold); /* Та самая желтая рамка */
+            border: 4px solid var(--fame-gold);
             border-radius: 25px;
             padding: 25px;
             display: flex;
@@ -61,17 +59,11 @@
         }
 
         .sidebar-title {
-            color: #d63031; /* Красный текст как на скриншоте */
+            color: #d63031;
             font-weight: bold;
             font-size: 1.1rem;
             margin-bottom: 20px;
             line-height: 1.3;
-        }
-
-        .winner-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
         }
 
         .winner-item {
@@ -79,106 +71,80 @@
             font-weight: bold;
             color: var(--vip-purple);
             padding-bottom: 10px;
-            border-bottom: 2px solid #d63031; /* Линия под именем */
+            border-bottom: 2px solid #d63031;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
         }
 
-        .winner-date {
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            font-weight: normal;
-        }
-
-        /* Остальные стили */
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px;
-        }
-
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .logo { font-size: 1.6rem; font-weight: bold; }
         .brand { color: var(--vip-purple); }
 
-        .language-selector { display: flex; gap: 8px; flex-wrap: wrap; }
-
+        .language-selector { display: flex; gap: 8px; }
         .lang-btn {
             background: rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(136, 84, 208, 0.3);
             border-radius: 20px;
             padding: 6px 12px; font-size: 0.8rem;
-            cursor: pointer; transition: all 0.3s ease;
+            cursor: pointer; transition: 0.3s;
         }
-
-        .lang-btn.active { background: var(--vip-purple); color: white; border-color: var(--vip-purple); }
+        .lang-btn.active { background: var(--vip-purple); color: white; }
 
         .content { display: flex; gap: 40px; align-items: center; flex: 1; }
 
-        .left-side { flex: 1; display: flex; justify-content: center; }
-
-        .doll-face-animation {
-            max-width: 100%; max-height: 45vh;
-            border-radius: 15px;
-            object-fit: contain;
-            animation: magicReveal 2s ease-out forwards;
+        .left-side { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        
+        .photo-container {
+            width: 100%;
+            max-width: 400px;
+            position: relative;
         }
 
-        @keyframes magicReveal {
-            from { opacity: 0; filter: blur(10px); transform: translateY(10px); }
-            to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        #main-photo {
+            width: 100%;
+            height: auto;
+            max-height: 45vh;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: opacity 0.5s ease;
         }
+
+        .gallery-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            justify-content: center;
+        }
+
+        .btn-gallery {
+            padding: 12px 24px;
+            border-radius: 25px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-like { background: white; color: #ff7675; border: 2px solid #ff7675; }
+        .btn-like:disabled { background: #ff7675; color: white; cursor: default; }
+        .btn-next { background: var(--vip-purple); color: white; }
+        .btn-next:hover { transform: scale(1.05); }
 
         .right-side { flex: 1.5; display: flex; flex-direction: column; }
+        .main-title { font-size: 2.5rem; font-weight: 900; margin: 0; background: linear-gradient(45deg, var(--text-dark), var(--vip-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .promo-box { padding: 20px; border-left: 4px solid var(--accent-color); background: rgba(255, 255, 255, 0.2); border-radius: 0 10px 10px 0; margin: 20px 0; }
+        .loader-container { background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 20px; margin: 15px 0; }
+        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 5px; overflow: hidden; margin-top: 10px; }
+        .progress-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-color), #ff8ba0); }
 
-        .main-title {
-            font-size: 2.5rem; font-weight: 900;
-            background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin: 0 0 10px 0;
-        }
-
-        .subtitle { font-size: 1.1rem; color: var(--text-gray); margin-bottom: 20px; }
-
-        .promo-box {
-            padding: 20px; border-left: 4px solid var(--accent-color);
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 0 10px 10px 0; margin-bottom: 15px;
-        }
-
-        .status-highlight { color: var(--vip-purple); font-weight: bold; margin: 10px 0; }
-
-        .contest-rules {
-            font-size: 0.85rem; color: var(--text-gray); font-style: italic;
-            border: 1px dashed var(--accent-color); padding: 8px; border-radius: 8px;
-        }
-
-        .email-info {
-            background: rgba(136, 84, 208, 0.08); padding: 12px;
-            border-radius: 8px; border-left: 3px solid var(--vip-purple); margin-top: 15px;
-        }
-
-        .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
-
-        .loader-container {
-            background: rgba(255, 255, 255, 0.6); padding: 15px;
-            border-radius: 20px; margin: 15px 0;
-            border: 2px solid rgba(255, 183, 197, 0.3);
-        }
-
-        .progress-bar { height: 10px; background: #e0e0e0; border-radius: 5px; margin: 10px 0; overflow: hidden; }
-        .progress-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-color), #ff8ba0); border-radius: 5px; }
-
-        .thanks-note { margin-top: auto; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.05); color: var(--text-gray); font-size: 0.8rem; }
-        .insta-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
-
-        /* Адаптивность для мобилок */
         @media (max-width: 992px) {
             .wrapper { flex-direction: column; }
-            .container { order: 1; }
-            .hall-of-fame-sidebar { order: 2; width: 100%; }
             .content { flex-direction: column; text-align: center; }
-            .right-side { align-items: center; }
-            .promo-box { border-left: none; border-top: 4px solid var(--accent-color); }
         }
     </style>
 </head>
@@ -190,15 +156,19 @@
                 <div class="logo"><span class="brand">Blythello</span>.com</div>
                 <div class="language-selector">
                     <button class="lang-btn" data-lang="en">EN</button>
-                    <button class="lang-btn" data-lang="de">DE</button>
-                    <button class="lang-btn" data-lang="fr">FR</button>
                     <button class="lang-btn active" data-lang="ja">JA</button>
                 </div>
             </div>
 
             <main class="content">
                 <div class="left-side">
-                    <img src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
+                    <div class="photo-container">
+                        <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe">
+                        <div class="gallery-nav" id="gallery-controls">
+                            <button id="like-btn" class="btn-gallery btn-like">❤️ Like</button>
+                            <button id="next-btn" class="btn-gallery btn-next">Next ✨</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="right-side">
@@ -207,39 +177,28 @@
                     
                     <div class="promo-box">
                         <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
-                        <p class="status-highlight" data-key="promo2">これにより、創設メンバーとして「殿堂」に名を刻むことができます！</p>
-                        <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
-                        
-                        <div class="email-info">
-                            <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
-                            <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
+                        <p style="color:var(--vip-purple); font-weight:bold;" data-key="promo2">創設メンバーとして「殿堂」に名を刻むことができます！</p>
+                        <div style="background:rgba(136,84,208,0.1); padding:10px; border-radius:10px; margin-top:10px;">
+                            <a href="mailto:blythello@blythello.com" style="color:var(--vip-purple); text-decoration:none; font-weight:bold;">blythello@blythello.com</a>
                         </div>
                     </div>
 
                     <div class="loader-container">
-                        <span class="loader-text" data-key="loading">近日公開...</span>
+                        <span data-key="loading">近日公開...</span>
                         <div class="progress-bar"><div class="progress-fill"></div></div>
-                    </div>
-
-                    <div class="thanks-note">
-                        <span data-key="thanks">サイト運営者は</span> 
-                        <a href="https://instagram.com/moriteradolls" target="_blank" class="insta-link">@**riteradolls</a> 
-                        <span data-key="thanks2">の知的貢献に感謝いたします。</span>
                     </div>
                 </div>
             </main>
         </div>
 
         <aside class="hall-of-fame-sidebar">
-            <div class="sidebar-title" data-key="sidebarTitle">
-                Those who have been with us since the first days
-            </div>
-            <ul class="winner-list">
+            <div class="sidebar-title" data-key="sidebarTitle">初期から私たちを支えてくれている方々</div>
+            <ul class="winner-list" id="winners">
                 <li class="winner-item">
                     <span>1. @ne0vdarks</span>
-                    <span class="winner-date">20.02.2026</span>
+                    <span style="font-size:0.8rem; color:var(--text-gray);">20.02.2026</span>
                 </li>
-                </ul>
+            </ul>
         </aside>
     </div>
 
@@ -248,45 +207,110 @@
             en: {
                 title: "WE'RE ALMOST READY!",
                 subtitle: "The world of Blythe is coming soon.",
-                promo1: "Go to Instagram, find <strong>@**riteradolls</strong> and send the full name to our email.",
-                promo2: "By doing this, you can become a <strong>Founding Member</strong> and enter our 'Hall of Fame'!",
-                rules: "One participant is chosen every 24 hours.",
-                emailTitle: "Send the full name and suggestions to:",
+                promo1: "Find <strong>@**riteradolls</strong> on Instagram and email us their full name.",
+                promo2: "Become a Founding Member in our Hall of Fame!",
                 loading: "LAUNCHING SOON...",
-                thanks: "The site administration thanks",
-                thanks2: "for her intellectual contribution.",
-                sidebarTitle: "Those who have been with us since the first days"
+                sidebarTitle: "Early Supporters",
+                like: "❤️ Like",
+                liked: "❤️ Liked",
+                next: "Next ✨"
             },
             ja: {
                 title: "もうすぐ準備完了です！",
                 subtitle: "ブライスの世界が間もなく登場します。",
-                promo1: "Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。",
-                promo2: "これにより、<strong>創設メンバー</strong>として「殿堂」に名を刻むことができます！",
-                rules: "24時間ごとに1名の参加者が選ばれます。",
-                emailTitle: "フルネームとご提案をこちらまで：",
+                promo1: "Instagramで <strong>@**riteradolls</strong> を見つけ、フルネームをメールしてください。",
+                promo2: "創設メンバーとして殿堂入りしましょう！",
                 loading: "近日公開...",
-                thanks: "サイト運営者は",
-                thanks2: "の知的貢献に感謝いたします。",
-                sidebarTitle: "初期から私たちを支えてくれている方々"
+                sidebarTitle: "初期サポーター",
+                like: "❤️ いいね",
+                liked: "❤️ 済み",
+                next: "次へ ✨"
             }
-            // Другие языки можно добавить по аналогии
         };
 
-        function changeLanguage(lang) {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if (translations[lang] && translations[lang][key]) {
-                    el.innerHTML = translations[lang][key];
-                }
-            });
+        const config = {
+            currentLang: 'ja',
+            folder: 'FG'
+        };
+
+        let imageList = [];
+        const img = document.getElementById('main-photo');
+        const controls = document.getElementById('gallery-controls');
+        const likeBtn = document.getElementById('like-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Функция загрузки списка из 1.txt
+        async function fetchImageList() {
+            try {
+                const response = await fetch(config.folder + '/1.txt');
+                const text = await response.text();
+                // Разбиваем по строкам, убираем пробелы и пустые строки
+                imageList = text.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
+                console.log("Images loaded from 1.txt:", imageList.length);
+                if (imageList.length > 0) getNewPhoto();
+            } catch (err) {
+                console.error("Error loading 1.txt:", err);
+            }
         }
 
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
+        function updateLabels() {
+            const t = translations[config.currentLang];
+            likeBtn.innerText = likeBtn.disabled ? t.liked : t.like;
+            nextBtn.innerText = t.next;
+        }
+
+        function getNewPhoto() {
+            if (imageList.length === 0) return;
+
+            const randomName = imageList[Math.floor(Math.random() * imageList.length)];
+            // Добавляем расширение, если его нет в текстовике
+            const fileName = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
+            const path = config.folder + '/' + fileName;
+
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = path;
+                img.style.opacity = '1';
+                
+                const savedLikes = JSON.parse(localStorage.getItem('my_likes') || '[]');
+                likeBtn.disabled = savedLikes.includes(path);
+                updateLabels();
+            }, 500);
+        }
+
+        likeBtn.addEventListener('click', () => {
+            const path = img.getAttribute('src');
+            let savedLikes = JSON.parse(localStorage.getItem('my_likes') || '[]');
+            if(!savedLikes.includes(path)) {
+                savedLikes.push(path);
+                localStorage.setItem('my_likes', JSON.stringify(savedLikes));
+                likeBtn.disabled = true;
+                updateLabels();
+            }
         });
+
+        nextBtn.addEventListener('click', getNewPhoto);
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                config.currentLang = btn.dataset.lang;
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                document.querySelectorAll('[data-key]').forEach(el => {
+                    const key = el.getAttribute('data-key');
+                    el.innerHTML = translations[config.currentLang][key];
+                });
+                updateLabels();
+            });
+        });
+
+        window.onload = () => {
+            setTimeout(() => {
+                controls.style.opacity = '1';
+                fetchImageList();
+            }, 2500);
+        };
     </script>
 </body>
 </html>
