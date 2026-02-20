@@ -118,7 +118,6 @@
             margin-top: 20px;
             opacity: 0;
             transition: opacity 1s ease;
-            justify-content: center;
         }
 
         .btn-gallery {
@@ -239,17 +238,16 @@
         const likeBtn = document.getElementById('like-btn');
         const nextBtn = document.getElementById('next-btn');
 
-        // Функция загрузки списка из 1.txt
+        // Загрузка списка имен из 1.txt
         async function fetchImageList() {
             try {
                 const response = await fetch(config.folder + '/1.txt');
+                if (!response.ok) throw new Error('File not found');
                 const text = await response.text();
-                // Разбиваем по строкам, убираем пробелы и пустые строки
                 imageList = text.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
-                console.log("Images loaded from 1.txt:", imageList.length);
                 if (imageList.length > 0) getNewPhoto();
             } catch (err) {
-                console.error("Error loading 1.txt:", err);
+                console.error("Error: Make sure FG/1.txt exists and is accessible.", err);
             }
         }
 
@@ -263,7 +261,6 @@
             if (imageList.length === 0) return;
 
             const randomName = imageList[Math.floor(Math.random() * imageList.length)];
-            // Добавляем расширение, если его нет в текстовике
             const fileName = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
             const path = config.folder + '/' + fileName;
 
@@ -306,6 +303,7 @@
         });
 
         window.onload = () => {
+            // Дизайн как был: через 2.5 сек показываем кнопки и загружаем первое фото
             setTimeout(() => {
                 controls.style.opacity = '1';
                 fetchImageList();
