@@ -12,7 +12,7 @@
             --text-dark: #2d3436;
             --text-gray: #636e72;
             --vip-purple: #8854d0;
-            --fame-gold: #f1c40f; 
+            --fame-gold: #f1c40f;
         }
 
         * { box-sizing: border-box; }
@@ -21,8 +21,8 @@
             margin: 0; padding: 10px;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: var(--main-bg);
-            height: 100vh; /* Фиксированная высота экрана */
-            overflow: hidden; /* Запрет общего скролла */
+            height: 100vh;
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             color: var(--text-dark);
             line-height: 1.4;
@@ -33,7 +33,7 @@
             gap: 15px;
             max-width: 1400px;
             width: 100%;
-            height: 90vh; /* Высота контента */
+            height: 90vh;
             align-items: stretch;
         }
 
@@ -48,7 +48,7 @@
             overflow: hidden;
         }
 
-        /* Боковые панели */
+        /* Боковая панель Hall of Fame */
         .hall-of-fame-sidebar {
             flex: 0 0 280px;
             background: rgba(255, 255, 255, 0.5);
@@ -58,10 +58,10 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; /* Скролл только внутри списка */
+            overflow-y: auto;
         }
 
-        /* Новая рамка слева - высота синхронизирована с фото через JS или flex */
+        /* Левая вертикальная рамка */
         .left-info-sidebar {
             flex: 0 0 50px;
             border: 3px solid #badc58;
@@ -72,7 +72,7 @@
             justify-content: center;
             opacity: 0;
             transition: opacity 1s ease;
-            align-self: center; /* Центрируем относительно контента */
+            align-self: center;
         }
 
         .vertical-text {
@@ -101,21 +101,23 @@
         .lang-btn.active { background: var(--vip-purple); color: white; }
 
         .content { display: flex; gap: 30px; align-items: center; flex: 1; overflow: hidden; }
-        
-        .left-side { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+
+        .left-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             height: 100%;
         }
 
+        /* ИСПРАВЛЕНО: добавлен CSS transition для плавного скрытия/показа */
         .doll-face-animation {
-            max-width: 100%; 
-            max-height: 55vh; /* Ограничение высоты фото */
+            max-width: 100%;
+            max-height: 55vh;
             border-radius: 15px;
             object-fit: contain;
+            transition: opacity 0.5s ease;
             animation: magicReveal 2s ease-out forwards;
         }
 
@@ -147,25 +149,84 @@
 
         .status-highlight { color: var(--vip-purple); font-weight: bold; margin: 5px 0; }
         .contest-rules { font-size: 0.8rem; color: var(--text-gray); font-style: italic; border: 1px dashed var(--accent-color); padding: 5px; border-radius: 8px; }
-        
+
         .email-info { background: rgba(136, 84, 208, 0.08); padding: 10px; border-radius: 8px; border-left: 3px solid var(--vip-purple); margin-top: 10px; }
         .email-link { color: var(--vip-purple); font-weight: bold; text-decoration: none; }
 
-        .loader-container { background: rgba(255, 255, 255, 0.6); padding: 10px; border-radius: 20px; margin: 10px 0; }
-        .progress-bar { height: 8px; background: #e0e0e0; border-radius: 5px; margin: 5px 0; overflow: hidden; }
-        .progress-fill { height: 100%; width: 35%; background: linear-gradient(90deg, var(--accent-color), #ff8ba0); }
+        /* ИСПРАВЛЕНО: прогресс-блок с числом 37% */
+        .loader-container {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px 12px;
+            border-radius: 20px;
+            margin: 10px 0;
+        }
+
+        .loader-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .loader-text {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .loader-percent {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: var(--vip-purple);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-color), #c56cf0, #8854d0);
+            border-radius: 10px;
+            transition: width 1.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .progress-fill.animated {
+            width: 37%;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.65rem;
+            color: #b2bec3;
+        }
+
+        .progress-steps span.done {
+            color: var(--vip-purple);
+            font-weight: bold;
+        }
 
         .thanks-note { margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(0,0,0,0.05); color: var(--text-gray); font-size: 0.75rem; }
 
-        /* Стили списка Hall of Fame */
+        /* Hall of Fame стили */
         .sidebar-title { color: #d63031; font-weight: bold; font-size: 1rem; margin-bottom: 15px; line-height: 1.2; }
         .winner-list { list-style: none; padding: 0; margin: 0; }
         .winner-item { font-size: 0.95rem; font-weight: bold; color: var(--vip-purple); padding-bottom: 8px; border-bottom: 2px solid #d63031; display: flex; justify-content: space-between; margin-bottom: 8px; }
         .winner-date { font-size: 0.7rem; color: var(--text-gray); font-weight: normal; }
 
-        .btn-gallery { padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+        .btn-gallery { padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
         .btn-like { background: white; color: #ff7675; border: 1px solid #ff7675; }
+        .btn-like:hover:not(:disabled) { background: #fff0f0; }
+        .btn-like:disabled { opacity: 0.5; cursor: default; }
         .btn-next { background: var(--vip-purple); color: white; }
+        .btn-next:hover { background: #7341c0; }
     </style>
 </head>
 <body>
@@ -173,7 +234,7 @@
     <div class="wrapper">
         <aside class="left-info-sidebar" id="left-banner">
             <div class="vertical-text" data-key="leftBanner">
-                To keep you entertained while we’re getting the site up and running smoothly, we’ve made it possible to view the work of our best artists.
+                サイトの立ち上げをスムーズに進めている間、皆様に楽しんでいただけるよう、最高のアーティストの作品を閲覧できるようにしました。
             </div>
         </aside>
 
@@ -200,26 +261,38 @@
                 <div class="right-side">
                     <h1 class="main-title" data-key="title">もうすぐ準備完了です！</h1>
                     <p class="subtitle" data-key="subtitle">ブライスの世界が間もなく登場します。</p>
-                    
+
                     <div class="promo-box">
                         <p data-key="promo1">Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。</p>
                         <p class="status-highlight" data-key="promo2">これにより、<strong>創設メンバー</strong>として「殿堂」に名を刻むことができます！</p>
                         <p class="contest-rules" data-key="rules">24時間ごとに1名の参加者が選ばれます。</p>
-                        
+
                         <div class="email-info">
                             <strong data-key="emailTitle">フルネームとご提案をこちらまで：</strong><br>
                             <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
                         </div>
                     </div>
 
+                    <!-- ИСПРАВЛЕНО: прогресс-бар с 37% и метками этапов -->
                     <div class="loader-container">
-                        <span class="loader-text" data-key="loading">近日公開...</span>
-                        <div class="progress-bar"><div class="progress-fill"></div></div>
+                        <div class="loader-header">
+                            <span class="loader-text" data-key="loading">近日公開...</span>
+                            <span class="loader-percent">37%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-steps">
+                            <span class="done" data-key="step1">✓ Design</span>
+                            <span class="done" data-key="step2">✓ Backend</span>
+                            <span data-key="step3">⧖ Content</span>
+                            <span data-key="step4">○ Launch</span>
+                        </div>
                     </div>
 
                     <div class="thanks-note">
-                        <span data-key="thanks">サイト運営者は</span> 
-                        <a href="https://instagram.com/moriteradolls" target="_blank" style="color:var(--vip-purple); font-weight:bold; text-decoration:none;">@**riteradolls</a> 
+                        <span data-key="thanks">サイト運営者は</span>
+                        <a href="https://instagram.com/moriteradolls" target="_blank" style="color:var(--vip-purple); font-weight:bold; text-decoration:none;">@**riteradolls</a>
                         <span data-key="thanks2">の知的貢献に感謝いたします。</span>
                     </div>
                 </div>
@@ -250,8 +323,9 @@
                 thanks: "The site administration thanks",
                 thanks2: "for her intellectual contribution.",
                 sidebarTitle: "Those who have been with us since the first days",
-                leftBanner: "To keep you entertained while we’re getting the site up and running smoothly, we’ve made it possible to view the work of our best artists.",
-                like: "❤️ Like", liked: "❤️ Liked", next: "Next ✨"
+                leftBanner: "To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.",
+                like: "❤️ Like", liked: "❤️ Liked", next: "Next ✨",
+                step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Content", step4: "○ Launch"
             },
             de: {
                 title: "WIR SIND FAST BEREIT!",
@@ -265,7 +339,8 @@
                 thanks2: "für ihren Beitrag.",
                 sidebarTitle: "Unterstützer der ersten Stunde",
                 leftBanner: "Um Sie zu unterhalten, während wir die Website reibungslos zum Laufen bringen, haben wir es ermöglicht, die Werke unserer besten Künstler zu sehen.",
-                like: "❤️ Like", liked: "❤️ Geliked", next: "Weiter ✨"
+                like: "❤️ Like", liked: "❤️ Geliked", next: "Weiter ✨",
+                step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Inhalt", step4: "○ Start"
             },
             fr: {
                 title: "NOUS SOMMES PRESQUE PRÊTS !",
@@ -279,7 +354,8 @@
                 thanks2: "pour sa contribution.",
                 sidebarTitle: "Ceux qui sont avec nous depuis le début",
                 leftBanner: "Pour vous divertir pendant que nous mettons le site en marche, nous avons permis de visionner les œuvres de nos meilleurs artistes.",
-                like: "❤️ Like", liked: "❤️ Aimé", next: "Suivant ✨"
+                like: "❤️ Like", liked: "❤️ Aimé", next: "Suivant ✨",
+                step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Contenu", step4: "○ Lancer"
             },
             ja: {
                 title: "もうすぐ準備完了です！",
@@ -293,7 +369,8 @@
                 thanks2: "の知的貢献に感謝いたします。",
                 sidebarTitle: "初期から私たちを支えてくれている方々",
                 leftBanner: "サイトの立ち上げをスムーズに進めている間、皆様に楽しんでいただけるよう、最高のアーティストの作品を閲覧できるようにしました。",
-                like: "❤️ いいね", liked: "❤️ 済み", next: "次へ ✨"
+                like: "❤️ いいね", liked: "❤️ 済み", next: "次へ ✨",
+                step1: "✓ デザイン", step2: "✓ バックエンド", step3: "⧖ コンテンツ", step4: "○ 公開"
             }
         };
 
@@ -304,21 +381,24 @@
         const leftBanner = document.getElementById('left-banner');
         const likeBtn = document.getElementById('like-btn');
         const nextBtn = document.getElementById('next-btn');
+        const progressFill = document.getElementById('progress-fill');
 
-        // Функция подгона высоты левой рамки под высоту фото
+        // Синхронизация высоты левой панели с высотой фото
         function syncBannerHeight() {
-            if (img.complete) {
-                leftBanner.style.height = img.offsetHeight + "px";
-            }
+            leftBanner.style.height = img.offsetHeight + 'px';
         }
 
+        // ИСПРАВЛЕНО: получение списка изображений из файла
         async function fetchImageList() {
             try {
                 const response = await fetch('FG/1.txt');
+                if (!response.ok) throw new Error('File not found');
                 const text = await response.text();
                 imageList = text.split(/\r?\n/).map(s => s.trim()).filter(s => s.length > 0);
                 if (imageList.length > 0) getNewPhoto();
-            } catch (err) { console.error("Error loading FG/1.txt"); }
+            } catch (err) {
+                console.warn('Could not load FG/1.txt — gallery disabled:', err.message);
+            }
         }
 
         function getNewPhoto() {
@@ -327,18 +407,46 @@
             const fileName = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
             const path = 'FG/' + fileName;
 
+            // ИСПРАВЛЕНО: opacity через transition (задан в CSS), а не только через setAttribute
             img.style.opacity = '0';
+
             setTimeout(() => {
                 img.src = path;
                 img.onload = () => {
                     img.style.opacity = '1';
                     syncBannerHeight();
                 };
-                const savedLikes = JSON.parse(localStorage.getItem('my_likes') || '[]');
+                img.onerror = () => {
+                    // Если фото не загрузилось — показываем fallback
+                    img.style.opacity = '1';
+                };
+
+                // ИСПРАВЛЕНО: сохранение и проверка лайков реализована полностью
+                let savedLikes = [];
+                try {
+                    savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
+                } catch (e) { savedLikes = []; }
+
                 likeBtn.disabled = savedLikes.includes(path);
+                likeBtn.dataset.currentPath = path;
                 updateLabels();
             }, 500);
         }
+
+        // ИСПРАВЛЕНО: обработчик лайка теперь реально сохраняет
+        likeBtn.addEventListener('click', () => {
+            const path = likeBtn.dataset.currentPath;
+            if (!path || likeBtn.disabled) return;
+            try {
+                let savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
+                if (!savedLikes.includes(path)) {
+                    savedLikes.push(path);
+                    localStorage.setItem('blythello_likes', JSON.stringify(savedLikes));
+                }
+            } catch (e) { console.warn('localStorage unavailable'); }
+            likeBtn.disabled = true;
+            updateLabels();
+        });
 
         function updateLabels() {
             const t = translations[currentLang];
@@ -348,28 +456,48 @@
 
         function changeLanguage(lang) {
             currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            document.querySelectorAll('.lang-btn').forEach(btn =>
+                btn.classList.toggle('active', btn.dataset.lang === lang)
+            );
             document.querySelectorAll('[data-key]').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (translations[lang] && translations[lang][key]) el.innerHTML = translations[lang][key];
+                if (translations[lang] && translations[lang][key] !== undefined) {
+                    el.innerHTML = translations[lang][key];
+                }
             });
             updateLabels();
         }
 
         nextBtn.addEventListener('click', getNewPhoto);
+
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => changeLanguage(btn.dataset.lang));
         });
 
-        window.onload = () => {
+        // ИСПРАВЛЕНО: анимация прогресс-бара через requestAnimationFrame после загрузки
+        function animateProgress() {
+            // Небольшая задержка чтобы transition успел примениться
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    progressFill.classList.add('animated');
+                });
+            });
+        }
+
+        window.addEventListener('load', () => {
+            animateProgress();
+            changeLanguage('ja'); // Инициализация: применяем японский язык ко всем элементам
+
             setTimeout(() => {
                 nav.style.opacity = '1';
                 leftBanner.style.opacity = '1';
                 fetchImageList();
+                // Синхронизация после показа, если фото уже загружено
+                if (img.complete && img.naturalHeight > 0) syncBannerHeight();
             }, 2500);
-        };
-        
-        window.onresize = syncBannerHeight;
+        });
+
+        window.addEventListener('resize', syncBannerHeight);
     </script>
 </body>
 </html>
