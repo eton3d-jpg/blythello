@@ -18,7 +18,7 @@
         * { box-sizing: border-box; }
 
         /* ============================================================
-           DESKTOP (оригинальный стиль — не изменён)
+           DESKTOP
         ============================================================ */
         body {
             margin: 0; padding: 10px;
@@ -128,6 +128,22 @@
 
         .gallery-nav {
             display: flex; gap: 10px; margin-top: 15px; opacity: 0; transition: 1s ease;
+            align-items: center;
+        }
+
+        /* Счётчик лайков */
+        .like-counter {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .like-counter span {
+            color: #ff7675;
+            font-size: 1rem;
+            font-weight: 900;
         }
 
         .right-side { flex: 1.5; display: flex; flex-direction: column; justify-content: center; }
@@ -185,9 +201,16 @@
         .btn-next { background: var(--vip-purple); color: white; }
         .btn-next:hover { background: #7341c0; }
 
+        /* Анимация лайка */
+        @keyframes likePopup {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .like-pop { animation: likePopup 0.3s ease; }
+
         /* ============================================================
            TABLET  769px – 1024px
-           Убираем левую рамку, немного сжимаем сайдбар
         ============================================================ */
         @media (max-width: 1024px) and (min-width: 769px) {
             .left-info-sidebar { display: none; }
@@ -197,11 +220,8 @@
 
         /* ============================================================
            MOBILE  ≤ 768px
-           Полностью переопределяем layout, десктоп не затрагиваем
         ============================================================ */
         @media (max-width: 768px) {
-
-            /* Сброс desktop-фиксированного поведения */
             body {
                 height: auto;
                 min-height: 100vh;
@@ -210,68 +230,21 @@
                 align-items: flex-start;
                 padding: 10px;
             }
-
-            .wrapper {
-                flex-direction: column;
-                height: auto;
-                gap: 10px;
-            }
-
-            /* Левая вертикальная рамка — скрыта */
+            .wrapper { flex-direction: column; height: auto; gap: 10px; }
             .left-info-sidebar { display: none; }
-
-            /* Основной блок */
-            .container {
-                border-radius: 24px;
-                padding: 14px 16px;
-                overflow: visible;
-                height: auto;
-            }
-
-            /* Контент — вертикально */
-            .content {
-                flex-direction: column;
-                gap: 14px;
-                overflow: visible;
-                height: auto;
-                align-items: stretch;
-            }
-
-            .left-side {
-                height: auto;
-                width: 100%;
-            }
-
-            /* Фото — компактное */
-            .doll-face-animation {
-                max-height: 44vw;
-                width: auto;
-                max-width: 100%;
-            }
-
+            .container { border-radius: 24px; padding: 14px 16px; overflow: visible; height: auto; }
+            .content { flex-direction: column; gap: 14px; overflow: visible; height: auto; align-items: stretch; }
+            .left-side { height: auto; width: 100%; }
+            .doll-face-animation { max-height: 44vw; width: auto; max-width: 100%; }
             .gallery-nav { justify-content: center; }
-
-            .right-side {
-                justify-content: flex-start;
-                overflow: visible;
-            }
-
+            .right-side { justify-content: flex-start; overflow: visible; }
             .main-title { font-size: 1.25rem; }
             .subtitle   { font-size: 0.88rem; margin-bottom: 10px; }
             .promo-box  { font-size: 0.84rem; padding: 12px; margin-bottom: 8px; }
             .loader-container { margin: 8px 0; }
             .progress-steps   { font-size: 0.6rem; }
             .thanks-note      { margin-top: 10px; font-size: 0.72rem; }
-
-            /* Hall of Fame — горизонтальная полоса снизу */
-            .hall-of-fame-sidebar {
-                flex: none;
-                width: 100%;
-                max-height: 220px;
-                border-radius: 20px;
-                padding: 14px 16px;
-            }
-
+            .hall-of-fame-sidebar { flex: none; width: 100%; max-height: 220px; border-radius: 20px; padding: 14px 16px; }
             .sidebar-title  { font-size: 0.88rem; margin-bottom: 8px; }
             .winner-item    { font-size: 0.85rem; }
         }
@@ -313,6 +286,7 @@
                     <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
                     <div class="gallery-nav" id="gallery-controls">
                         <button id="like-btn" class="btn-gallery btn-like" data-key="like">❤️ いいね</button>
+                        <div class="like-counter" id="like-counter">❤️ <span id="like-count">—</span></div>
                         <button id="next-btn" class="btn-gallery btn-next" data-key="next">次へ ✨</button>
                     </div>
                 </div>
@@ -368,6 +342,59 @@
     </div>
 
     <script>
+        /* ============================================================
+           SUPABASE CONFIG
+        ============================================================ */
+        const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
+
+        /* --- Supabase REST helper --- */
+        async function sbFetch(path, method = 'GET', body = null) {
+            const opts = {
+                method,
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=representation' : 'return=representation'
+                }
+            };
+            if (body) opts.body = JSON.stringify(body);
+            const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+        }
+
+        /* Получить количество лайков для фото */
+        async function getLikes(photo) {
+            try {
+                const data = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=count`);
+                return data[0]?.count ?? 0;
+            } catch { return 0; }
+        }
+
+        /* Добавить лайк — upsert: если фото есть, увеличить count, иначе создать */
+        async function addLike(photo) {
+            try {
+                // Сначала пробуем получить текущий count
+                const rows = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=id,count`);
+                if (rows.length > 0) {
+                    const { id, count } = rows[0];
+                    await sbFetch(`likes?id=eq.${id}`, 'PATCH', { count: count + 1 });
+                    return count + 1;
+                } else {
+                    await sbFetch('likes', 'POST', { photo, count: 1 });
+                    return 1;
+                }
+            } catch (e) {
+                console.error('Like error:', e);
+                return null;
+            }
+        }
+
+        /* ============================================================
+           TRANSLATIONS
+        ============================================================ */
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
@@ -431,13 +458,19 @@
             }
         };
 
+        /* ============================================================
+           APP STATE
+        ============================================================ */
         let currentLang = 'ja';
-        let imageList = [];
-        const img        = document.getElementById('main-photo');
-        const nav        = document.getElementById('gallery-controls');
-        const leftBanner = document.getElementById('left-banner');
-        const likeBtn    = document.getElementById('like-btn');
-        const nextBtn    = document.getElementById('next-btn');
+        let imageList   = [];
+        let currentPath = '';
+
+        const img          = document.getElementById('main-photo');
+        const nav          = document.getElementById('gallery-controls');
+        const leftBanner   = document.getElementById('left-banner');
+        const likeBtn      = document.getElementById('like-btn');
+        const nextBtn      = document.getElementById('next-btn');
+        const likeCountEl  = document.getElementById('like-count');
         const progressFill = document.getElementById('progress-fill');
 
         function isMobile() { return window.innerWidth <= 768; }
@@ -446,6 +479,68 @@
             if (!isMobile()) leftBanner.style.height = img.offsetHeight + 'px';
         }
 
+        /* --- Локальная защита от двойного лайка --- */
+        function hasLiked(path) {
+            try {
+                return JSON.parse(localStorage.getItem('blythello_likes') || '[]').includes(path);
+            } catch { return false; }
+        }
+
+        function markLiked(path) {
+            try {
+                const arr = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
+                if (!arr.includes(path)) { arr.push(path); localStorage.setItem('blythello_likes', JSON.stringify(arr)); }
+            } catch {}
+        }
+
+        /* --- Обновить счётчик на экране --- */
+        function setCount(n) {
+            likeCountEl.textContent = n === null ? '—' : n;
+        }
+
+        /* --- Загрузка нового фото --- */
+        async function getNewPhoto() {
+            if (!imageList.length) return;
+            const randomName = imageList[Math.floor(Math.random() * imageList.length)];
+            const fileName   = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
+            const path       = 'FG/' + fileName;
+
+            img.style.opacity = '0';
+            setCount('…');
+
+            setTimeout(async () => {
+                img.src = path;
+                img.onload  = () => { img.style.opacity = '1'; syncBannerHeight(); };
+                img.onerror = () => { img.style.opacity = '1'; };
+
+                currentPath      = path;
+                likeBtn.disabled = hasLiked(path);
+                updateLabels();
+
+                // Получаем актуальный счётчик из Supabase
+                const count = await getLikes(path);
+                setCount(count);
+            }, 500);
+        }
+
+        /* --- Кнопка лайка --- */
+        likeBtn.addEventListener('click', async () => {
+            if (!currentPath || likeBtn.disabled) return;
+
+            likeBtn.disabled = true;
+            markLiked(currentPath);
+            updateLabels();
+
+            // Анимация
+            likeCountEl.classList.remove('like-pop');
+            void likeCountEl.offsetWidth;
+            likeCountEl.classList.add('like-pop');
+
+            const newCount = await addLike(currentPath);
+            if (newCount !== null) setCount(newCount);
+        });
+
+        /* --- Загрузка списка изображений --- */
         async function fetchImageList() {
             try {
                 const response = await fetch('FG/1.txt');
@@ -458,41 +553,7 @@
             }
         }
 
-        function getNewPhoto() {
-            if (!imageList.length) return;
-            const randomName = imageList[Math.floor(Math.random() * imageList.length)];
-            const fileName   = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
-            const path       = 'FG/' + fileName;
-
-            img.style.opacity = '0';
-            setTimeout(() => {
-                img.src = path;
-                img.onload  = () => { img.style.opacity = '1'; syncBannerHeight(); };
-                img.onerror = () => { img.style.opacity = '1'; };
-
-                let savedLikes = [];
-                try { savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]'); } catch (e) {}
-
-                likeBtn.disabled = savedLikes.includes(path);
-                likeBtn.dataset.currentPath = path;
-                updateLabels();
-            }, 500);
-        }
-
-        likeBtn.addEventListener('click', () => {
-            const path = likeBtn.dataset.currentPath;
-            if (!path || likeBtn.disabled) return;
-            try {
-                let savedLikes = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
-                if (!savedLikes.includes(path)) {
-                    savedLikes.push(path);
-                    localStorage.setItem('blythello_likes', JSON.stringify(savedLikes));
-                }
-            } catch (e) {}
-            likeBtn.disabled = true;
-            updateLabels();
-        });
-
+        /* --- Смена языка --- */
         function updateLabels() {
             const t = translations[currentLang];
             likeBtn.innerText = likeBtn.disabled ? t.liked : t.like;
