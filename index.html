@@ -17,9 +17,6 @@
 
         * { box-sizing: border-box; }
 
-        /* ============================================================
-           DESKTOP
-        ============================================================ */
         body {
             margin: 0; padding: 10px;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -146,13 +143,13 @@
 
         .right-side { flex: 1.5; display: flex; flex-direction: column; justify-content: center; }
 
-        /* ===== КНОПКА ГАЛЕРЕИ ЛАЙКОВ ===== */
+        /* ===== КНОПКА ГАЛЕРЕИ ===== */
         .gallery-likes-btn {
             display: inline-flex;
             align-items: center;
             gap: 7px;
             align-self: flex-start;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding: 9px 20px;
             border-radius: 25px;
             background: linear-gradient(135deg, #ff7675, #fd79a8, #a29bfe);
@@ -162,17 +159,13 @@
             text-decoration: none;
             border: none;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 4px 18px rgba(253, 121, 168, 0.4);
             white-space: nowrap;
-            letter-spacing: 0.2px;
         }
         .gallery-likes-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(253, 121, 168, 0.55);
-        }
-        .gallery-likes-btn:active {
-            transform: translateY(0);
         }
         .gallery-likes-btn .btn-icon {
             font-size: 1rem;
@@ -185,6 +178,66 @@
             45%       { transform: scale(1.15); }
         }
 
+        /* ===== ОБЪЯВЛЕНИЕ (место красной рамки) ===== */
+        .announce-box {
+            background: linear-gradient(135deg, rgba(255,183,197,0.25) 0%, rgba(162,155,254,0.2) 100%);
+            border: 2px solid rgba(136, 84, 208, 0.25);
+            border-radius: 16px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .announce-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: linear-gradient(180deg, #fd79a8, #a29bfe);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .announce-icon {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .announce-text {
+            font-size: 0.78rem;
+            color: var(--text-dark);
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .announce-text strong {
+            color: var(--vip-purple);
+        }
+
+        .announce-subject {
+            display: inline-block;
+            margin-top: 5px;
+            background: rgba(136, 84, 208, 0.1);
+            border: 1px dashed rgba(136, 84, 208, 0.4);
+            border-radius: 8px;
+            padding: 2px 8px;
+            font-size: 0.72rem;
+            color: var(--vip-purple);
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .announce-email {
+            color: var(--vip-purple);
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.78rem;
+            word-break: break-all;
+        }
+        .announce-email:hover { text-decoration: underline; }
+
+        /* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
         .main-title {
             font-size: 1.8rem; font-weight: 900;
             background: linear-gradient(45deg, var(--text-dark), var(--vip-purple));
@@ -246,7 +299,7 @@
         .like-pop { animation: likePopup 0.3s ease; }
 
         /* ============================================================
-           TABLET  769px – 1024px
+           TABLET
         ============================================================ */
         @media (max-width: 1024px) and (min-width: 769px) {
             .left-info-sidebar { display: none; }
@@ -255,17 +308,10 @@
         }
 
         /* ============================================================
-           MOBILE  ≤ 768px
+           MOBILE
         ============================================================ */
         @media (max-width: 768px) {
-            body {
-                height: auto;
-                min-height: 100vh;
-                overflow-y: auto;
-                overflow-x: hidden;
-                align-items: flex-start;
-                padding: 10px;
-            }
+            body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; align-items: flex-start; padding: 10px; }
             .wrapper { flex-direction: column; height: auto; gap: 10px; }
             .left-info-sidebar { display: none; }
             .container { border-radius: 24px; padding: 14px 16px; overflow: visible; height: auto; }
@@ -278,17 +324,15 @@
             .subtitle   { font-size: 0.88rem; margin-bottom: 10px; }
             .promo-box  { font-size: 0.84rem; padding: 12px; margin-bottom: 8px; }
             .loader-container { margin: 8px 0; }
-            .progress-steps   { font-size: 0.6rem; }
-            .thanks-note      { margin-top: 10px; font-size: 0.72rem; }
+            .progress-steps { font-size: 0.6rem; }
+            .thanks-note { margin-top: 10px; font-size: 0.72rem; }
             .hall-of-fame-sidebar { flex: none; width: 100%; max-height: 220px; border-radius: 20px; padding: 14px 16px; }
-            .sidebar-title  { font-size: 0.88rem; margin-bottom: 8px; }
-            .winner-item    { font-size: 0.85rem; }
+            .sidebar-title { font-size: 0.88rem; margin-bottom: 8px; }
+            .winner-item { font-size: 0.85rem; }
             .gallery-likes-btn { align-self: center; font-size: 0.84rem; padding: 8px 18px; }
+            .announce-box { margin-bottom: 10px; }
         }
 
-        /* ============================================================
-           SMALL PHONES  ≤ 400px
-        ============================================================ */
         @media (max-width: 400px) {
             .main-title  { font-size: 1.05rem; }
             .promo-box   { font-size: 0.78rem; }
@@ -331,11 +375,22 @@
 
                 <div class="right-side">
 
-                    <!-- ===== КНОПКА ГАЛЕРЕИ ЛАЙКОВ ===== -->
+                    <!-- КНОПКА ГАЛЕРЕИ -->
                     <a href="gl.html" class="gallery-likes-btn" id="gallery-likes-btn">
                         <span class="btn-icon">❤️</span>
                         <span id="gallery-btn-text">いいねギャラリー</span>
                     </a>
+
+                    <!-- ОБЪЯВЛЕНИЕ (место красной рамки) -->
+                    <div class="announce-box">
+                        <span class="announce-icon">🎀</span>
+                        <p class="announce-text" id="announce-text">
+                            ギャラリーに参加したい方は、<br>
+                            <a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a> までメールをお送りください。<br>
+                            件名：<span class="announce-subject" id="announce-subject">参加希望</span><br>
+                            参加方法をご案内いたします。
+                        </p>
+                    </div>
 
                     <h1 class="main-title" data-key="title">もうすぐ準備完了です！</h1>
                     <p class="subtitle" data-key="subtitle">ブライスの世界が間もなく登場します。</p>
@@ -387,9 +442,6 @@
     </div>
 
     <script>
-        /* ============================================================
-           SUPABASE CONFIG
-        ============================================================ */
         const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
 
@@ -427,10 +479,7 @@
                     await sbFetch('likes', 'POST', { photo, count: 1 });
                     return 1;
                 }
-            } catch (e) {
-                console.error('Like error:', e);
-                return null;
-            }
+            } catch (e) { console.error('Like error:', e); return null; }
         }
 
         /* ============================================================
@@ -451,7 +500,8 @@
                 leftBanner: "To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.",
                 like: "❤️ Like", liked: "❤️ Liked", next: "Next ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Content", step4: "○ Launch",
-                galleryBtn: "Liked Gallery"
+                galleryBtn: "Liked Gallery",
+                announceText: 'If you want to participate in the Liked Gallery,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Subject: <span class="announce-subject">I want to participate</span><br>We will send you the instructions.',
             },
             de: {
                 title: "WIR SIND FAST BEREIT!",
@@ -467,7 +517,8 @@
                 leftBanner: "Um Sie zu unterhalten, während wir die Website reibungslos zum Laufen bringen, haben wir es ermöglicht, die Werke unserer besten Künstler zu sehen.",
                 like: "❤️ Like", liked: "❤️ Geliked", next: "Weiter ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Inhalt", step4: "○ Start",
-                galleryBtn: "Liked-Galerie"
+                galleryBtn: "Liked-Galerie",
+                announceText: 'Wenn Sie an der Liked-Galerie teilnehmen möchten,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Betreff: <span class="announce-subject">Ich möchte teilnehmen</span><br>Wir senden Ihnen die Anleitung.',
             },
             fr: {
                 title: "NOUS SOMMES PRESQUE PRÊTS !",
@@ -483,7 +534,8 @@
                 leftBanner: "Pour vous divertir pendant que nous mettons le site en marche, nous avons permis de visionner les œuvres de nos meilleurs artistes.",
                 like: "❤️ Like", liked: "❤️ Aimé", next: "Suivant ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Contenu", step4: "○ Lancer",
-                galleryBtn: "Galerie des favoris"
+                galleryBtn: "Galerie des favoris",
+                announceText: 'Pour participer à la Galerie des favoris,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Objet : <span class="announce-subject">Je veux participer</span><br>Nous vous enverrons les instructions.',
             },
             ja: {
                 title: "もうすぐ準備完了です！",
@@ -499,7 +551,8 @@
                 leftBanner: "サイトの立ち上げをスムーズに進めている間、皆様に楽しんでいただけるよう、最高のアーティストの作品を閲覧できるようにしました。",
                 like: "❤️ いいね", liked: "❤️ 済み", next: "次へ ✨",
                 step1: "✓ デザイン", step2: "✓ バックエンド", step3: "⧖ コンテンツ", step4: "○ 公開",
-                galleryBtn: "いいねギャラリー"
+                galleryBtn: "いいねギャラリー",
+                announceText: 'ギャラリーに参加したい方は、<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a> までメールをお送りください。<br>件名：<span class="announce-subject">参加希望</span><br>参加方法をご案内いたします。',
             }
         };
 
@@ -510,14 +563,15 @@
         let imageList   = [];
         let currentPath = '';
 
-        const img           = document.getElementById('main-photo');
-        const nav           = document.getElementById('gallery-controls');
-        const leftBanner    = document.getElementById('left-banner');
-        const likeBtn       = document.getElementById('like-btn');
-        const nextBtn       = document.getElementById('next-btn');
-        const likeCountEl   = document.getElementById('like-count');
-        const progressFill  = document.getElementById('progress-fill');
+        const img            = document.getElementById('main-photo');
+        const nav            = document.getElementById('gallery-controls');
+        const leftBanner     = document.getElementById('left-banner');
+        const likeBtn        = document.getElementById('like-btn');
+        const nextBtn        = document.getElementById('next-btn');
+        const likeCountEl    = document.getElementById('like-count');
+        const progressFill   = document.getElementById('progress-fill');
         const galleryBtnText = document.getElementById('gallery-btn-text');
+        const announceText   = document.getElementById('announce-text');
 
         function isMobile() { return window.innerWidth <= 768; }
 
@@ -554,11 +608,9 @@
                 img.src = path;
                 img.onload  = () => { img.style.opacity = '1'; syncBannerHeight(); };
                 img.onerror = () => { img.style.opacity = '1'; };
-
                 currentPath      = path;
                 likeBtn.disabled = hasLiked(path);
                 updateLabels();
-
                 const count = await getLikes(path);
                 setCount(count);
             }, 500);
@@ -569,11 +621,9 @@
             likeBtn.disabled = true;
             markLiked(currentPath);
             updateLabels();
-
             likeCountEl.classList.remove('like-pop');
             void likeCountEl.offsetWidth;
             likeCountEl.classList.add('like-pop');
-
             const newCount = await addLike(currentPath);
             if (newCount !== null) setCount(newCount);
         });
@@ -586,20 +636,20 @@
                 imageList = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
                 if (imageList.length > 0) getNewPhoto();
             } catch (err) {
-                console.warn('Could not load FG/1.txt — gallery disabled:', err.message);
+                console.warn('Could not load FG/1.txt:', err.message);
             }
         }
 
         function updateLabels() {
             const t = translations[currentLang];
-            likeBtn.innerText        = likeBtn.disabled ? t.liked : t.like;
-            nextBtn.innerText        = t.next;
+            likeBtn.innerText          = likeBtn.disabled ? t.liked : t.like;
+            nextBtn.innerText          = t.next;
             galleryBtnText.textContent = t.galleryBtn;
+            announceText.innerHTML     = t.announceText;
         }
 
         function changeLanguage(lang) {
             currentLang = lang;
-            // Сохраняем язык для синхронизации с gallery
             localStorage.setItem('blythello_lang', lang);
             document.querySelectorAll('.lang-btn').forEach(btn =>
                 btn.classList.toggle('active', btn.dataset.lang === lang)
