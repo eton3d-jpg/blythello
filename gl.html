@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blythello — ❤️ Liked Gallery</title>
+    <link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #fdfcfb 0%, #e2d1f9 100%);
+            --purple: #8854d0;
+            --pink: #ffb7c5;
+            --red: #d63031;
+            --gray: #636e72;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: #2d3436;
+            padding: 30px 20px 50px;
+        }
+
+        /* ===== ШАПКА ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .logo {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--purple);
+            margin-bottom: 6px;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #2d3436, var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 0.88rem;
+        }
+
+        /* ===== ЯЗЫК + НАЗАД ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(136,84,208,0.3);
+            color: var(--purple);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .back-btn:hover { background: rgba(136,84,208,0.1); }
+
+        .language-selector { display: flex; gap: 6px; flex-wrap: wrap; }
+        .lang-btn {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(136,84,208,0.3);
+            border-radius: 15px;
+            padding: 4px 11px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .lang-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+        /* ===== ВКЛАДКИ ===== */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 8px 22px;
+            border-radius: 20px;
+            border: 2px solid rgba(136,84,208,0.3);
+            background: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            color: #2d3436;
+        }
+        .tab-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+        .tab-btn:hover:not(.active) { background: rgba(136,84,208,0.1); }
+
+        /* ===== СЧЁТЧИКИ ===== */
+        .counter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .counter-pill {
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 10px 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(136,84,208,0.1);
+            text-align: center;
+        }
+
+        .counter-pill .num { font-size: 1.4rem; font-weight: 900; color: var(--purple); }
+        .counter-pill .lbl { font-size: 0.75rem; color: var(--gray); line-height: 1.3; }
+
+        /* ===== СЕТКА ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 25px rgba(136,84,208,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            animation: cardIn 0.4s ease both;
+        }
+
+        .card:hover { transform: translateY(-5px); box-shadow: 0 14px 40px rgba(136,84,208,0.2); }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 10px; left: 10px;
+            font-size: 1.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--red);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 900;
+            padding: 3px 7px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .popularity-bar { height: 3px; background: #f0ebff; }
+        .popularity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            transition: width 0.8s ease;
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            display: block;
+            background: #f0ebff;
+        }
+
+        .card-img.loading {
+            background: linear-gradient(90deg, #f0ebff 25%, #e2d1f9 50%, #f0ebff 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .card-footer {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .card-name {
+            font-size: 0.75rem;
+            color: var(--gray);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 130px;
+        }
+
+        .card-likes {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #fff0f3;
+            border: 1px solid #ffb7c5;
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-size: 0.82rem;
+            font-weight: 900;
+            color: var(--red);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        /* ===== LOADER ===== */
+        .loader-wrap { text-align: center; padding: 80px 20px; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid rgba(136,84,208,0.2);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text-msg { color: var(--gray); font-size: 0.9rem; }
+
+        /* ===== ПУСТО ===== */
+        .empty-state { text-align: center; padding: 80px 20px; color: var(--gray); }
+        .empty-state .icon { font-size: 4rem; margin-bottom: 14px; }
+
+        /* ===== АВТООБНОВЛЕНИЕ ===== */
+        .refresh-info { text-align: center; color: var(--gray); font-size: 0.72rem; margin-top: 20px; }
+        .refresh-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            background: #00b894;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ===== МОБИЛЬНАЯ ===== */
+        @media (max-width: 600px) {
+            body { padding: 16px 12px 40px; }
+            h1 { font-size: 1.4rem; }
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card-name { max-width: 80px; }
+            .top-bar { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Верхняя панель: назад + языки -->
+    <div class="top-bar">
+        <a href="index.html" class="back-btn" id="back-btn">← На главную</a>
+        <div class="language-selector">
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="de">DE</button>
+            <button class="lang-btn" data-lang="fr">FR</button>
+            <button class="lang-btn active" data-lang="ja">JA</button>
+        </div>
+    </div>
+
+    <!-- Шапка -->
+    <div class="header">
+        <div class="logo">Blythello.com</div>
+        <h1 id="page-title">❤️ Liked Gallery</h1>
+        <p class="subtitle" id="page-subtitle">最もいいねされた作品</p>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="tabs">
+        <button class="tab-btn active" data-mode="popular" id="tab-popular" onclick="switchMode('popular')">🏆 <span id="tab-popular-label">人気順</span></button>
+        <button class="tab-btn" data-mode="recent" id="tab-recent" onclick="switchMode('recent')">🕐 <span id="tab-recent-label">最新50件</span></button>
+    </div>
+
+    <!-- Счётчики -->
+    <div class="counter-bar">
+        <div class="counter-pill">
+            <div class="num" id="cnt-photos">—</div>
+            <div class="lbl" id="lbl-photos">いいねされた<br>写真</div>
+        </div>
+        <div class="counter-pill">
+            <div class="num" id="cnt-total">—</div>
+            <div class="lbl" id="lbl-total">いいね<br>合計</div>
+        </div>
+        <div class="counter-pill">
+            <div class="num" id="cnt-top">—</div>
+            <div class="lbl" id="lbl-top">最高<br>いいね数</div>
+        </div>
+    </div>
+
+    <!-- Контент -->
+    <div id="loader-wrap" class="loader-wrap">
+        <div class="spinner"></div>
+        <div class="loader-text-msg" id="loading-msg">読み込み中...</div>
+    </div>
+
+    <div class="grid" id="grid" style="display:none"></div>
+
+    <div class="empty-state" id="empty" style="display:none">
+        <div class="icon">🎀</div>
+        <p id="empty-msg">まだいいねがありません。<br>最初にいいねしてみましょう！</p>
+    </div>
+
+    <div class="refresh-info">
+        <span class="refresh-dot"></span><span id="refresh-label">30秒ごとに自動更新</span>
+    </div>
+
+    <script>
+        /* ============================================================
+           SUPABASE
+        ============================================================ */
+        const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
+
+        /* ============================================================
+           ПЕРЕВОДЫ
+        ============================================================ */
+        const t = {
+            en: {
+                pageTitle:    '❤️ Liked Gallery',
+                subtitle:     'The most liked works of our artists',
+                back:         '← Back to main',
+                tabPopular:   'By popularity',
+                tabRecent:    'Last 50',
+                lblPhotos:    'photos\nliked',
+                lblTotal:     'total\nlikes',
+                lblTop:       'record\nfor photo',
+                loadingMsg:   'Loading gallery…',
+                emptyMsg:     'No likes yet.\nBe the first!',
+                refreshLabel: 'Auto-update every 30 seconds',
+                newBadge:     'NEW',
+            },
+            de: {
+                pageTitle:    '❤️ Liked Gallery',
+                subtitle:     'Die beliebtesten Werke unserer Künstler',
+                back:         '← Zurück zur Hauptseite',
+                tabPopular:   'Nach Beliebtheit',
+                tabRecent:    'Letzte 50',
+                lblPhotos:    'Fotos\ngeliked',
+                lblTotal:     'Likes\ngesamt',
+                lblTop:       'Rekord\nbei Foto',
+                loadingMsg:   'Galerie wird geladen…',
+                emptyMsg:     'Noch keine Likes.\nSei der Erste!',
+                refreshLabel: 'Automatische Aktualisierung alle 30 Sekunden',
+                newBadge:     'NEU',
+            },
+            fr: {
+                pageTitle:    '❤️ Galerie des favoris',
+                subtitle:     'Les œuvres les plus aimées de nos artistes',
+                back:         '← Retour à l\'accueil',
+                tabPopular:   'Par popularité',
+                tabRecent:    '50 dernières',
+                lblPhotos:    'photos\naimées',
+                lblTotal:     'total\ndes likes',
+                lblTop:       'record\nd\'un photo',
+                loadingMsg:   'Chargement de la galerie…',
+                emptyMsg:     'Pas encore de likes.\nSoyez le premier !',
+                refreshLabel: 'Mise à jour automatique toutes les 30 secondes',
+                newBadge:     'NOUVEAU',
+            },
+            ja: {
+                pageTitle:    '❤️ いいねギャラリー',
+                subtitle:     '最もいいねされた作品',
+                back:         '← メインに戻る',
+                tabPopular:   '人気順',
+                tabRecent:    '最新50件',
+                lblPhotos:    'いいねされた\n写真',
+                lblTotal:     'いいね\n合計',
+                lblTop:       '最高\nいいね数',
+                loadingMsg:   '読み込み中...',
+                emptyMsg:     'まだいいねがありません。\n最初にいいねしてみましょう！',
+                refreshLabel: '30秒ごとに自動更新',
+                newBadge:     '新着',
+            }
+        };
+
+        /* ============================================================
+           ЯЗЫК
+        ============================================================ */
+        // Читаем язык из localStorage (синхронизация с основной страницей)
+        let currentLang = localStorage.getItem('blythello_lang') || 'ja';
+
+        function applyLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('blythello_lang', lang);
+
+            // Кнопки языка
+            document.querySelectorAll('.lang-btn').forEach(b =>
+                b.classList.toggle('active', b.dataset.lang === lang)
+            );
+
+            const tr = t[lang];
+            document.getElementById('page-title').textContent      = tr.pageTitle;
+            document.getElementById('page-subtitle').textContent   = tr.subtitle;
+            document.getElementById('back-btn').textContent        = tr.back;
+            document.getElementById('tab-popular-label').textContent = tr.tabPopular;
+            document.getElementById('tab-recent-label').textContent  = tr.tabRecent;
+            document.getElementById('loading-msg').textContent     = tr.loadingMsg;
+            document.getElementById('empty-msg').innerHTML         = tr.emptyMsg.replace('\n', '<br>');
+            document.getElementById('refresh-label').textContent   = tr.refreshLabel;
+
+            // Счётчики — подписи
+            document.getElementById('lbl-photos').innerHTML = tr.lblPhotos.replace('\n', '<br>');
+            document.getElementById('lbl-total').innerHTML  = tr.lblTotal.replace('\n', '<br>');
+            document.getElementById('lbl-top').innerHTML    = tr.lblTop.replace('\n', '<br>');
+
+            // Обновляем бейджи NEW на карточках
+            document.querySelectorAll('.new-badge').forEach(b => b.textContent = tr.newBadge);
+
+            document.documentElement.lang = lang;
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn =>
+            btn.addEventListener('click', () => applyLang(btn.dataset.lang))
+        );
+
+        /* ============================================================
+           ДАННЫЕ
+        ============================================================ */
+        let currentMode = 'popular';
+        let allData     = [];
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.tab-btn').forEach(b =>
+                b.classList.toggle('active', b.dataset.mode === mode)
+            );
+            renderGrid();
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(
+                    `${SUPABASE_URL}/rest/v1/likes?select=photo,count&limit=1000`,
+                    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+                );
+                if (!res.ok) throw new Error(await res.text());
+                allData = await res.json();
+                updateCounters();
+                renderGrid();
+            } catch (e) {
+                document.getElementById('loader-wrap').innerHTML =
+                    `<div style="color:#d63031;text-align:center;padding:40px">❌ ${e.message}</div>`;
+            }
+        }
+
+        function updateCounters() {
+            const total = allData.reduce((s, r) => s + (r.count || 0), 0);
+            const top   = allData.length ? Math.max(...allData.map(r => r.count || 0)) : 0;
+            document.getElementById('cnt-photos').textContent = allData.length;
+            document.getElementById('cnt-total').textContent  = total;
+            document.getElementById('cnt-top').textContent    = top;
+        }
+
+        function renderGrid() {
+            const loader = document.getElementById('loader-wrap');
+            const grid   = document.getElementById('grid');
+            const empty  = document.getElementById('empty');
+
+            if (allData.length === 0) {
+                loader.style.display = 'none';
+                grid.style.display   = 'none';
+                empty.style.display  = 'block';
+                return;
+            }
+
+            let data = [...allData];
+
+            if (currentMode === 'popular') {
+                data.sort((a, b) => (b.count || 0) - (a.count || 0));
+                data = data.slice(0, 50);
+            } else {
+                data = data.slice(-50).reverse();
+            }
+
+            const maxCount = Math.max(...data.map(r => r.count || 0)) || 1;
+            const existing = new Set(Array.from(grid.querySelectorAll('.card')).map(c => c.dataset.photo));
+            const incoming = new Set(data.map(r => r.photo));
+
+            // Удаляем лишние
+            grid.querySelectorAll('.card').forEach(c => {
+                if (!incoming.has(c.dataset.photo)) c.remove();
+            });
+
+            loader.style.display = 'none';
+            empty.style.display  = 'none';
+            grid.style.display   = 'grid';
+
+            const tr = t[currentLang];
+
+            data.forEach((row, i) => {
+                const pct  = Math.round(((row.count || 0) / maxCount) * 100);
+                const name = row.photo.replace('FG/', '').replace('.jpg', '');
+                const isNew = !existing.has(row.photo);
+
+                let card = grid.querySelector(`.card[data-photo="${CSS.escape(row.photo)}"]`);
+
+                if (!card) {
+                    card = document.createElement('div');
+                    card.className      = 'card';
+                    card.dataset.photo  = row.photo;
+                    card.innerHTML      = buildCard(row, name, pct, i, isNew, tr);
+                    grid.appendChild(card);
+
+                    // Ленивая загрузка картинки
+                    const imgEl  = card.querySelector('.card-img');
+                    imgEl.classList.add('loading');
+                    const tmp = new Image();
+                    tmp.onload  = () => { imgEl.src = row.photo; imgEl.classList.remove('loading'); };
+                    tmp.onerror = () => { imgEl.classList.remove('loading'); };
+                    tmp.src = row.photo;
+                } else {
+                    // Обновляем данные без пересоздания
+                    const likesEl = card.querySelector('.card-likes');
+                    const fillEl  = card.querySelector('.popularity-fill');
+                    const rankEl  = card.querySelector('.rank-badge');
+                    if (likesEl) likesEl.innerHTML = `❤️ ${row.count || 0}`;
+                    if (fillEl)  fillEl.style.width = pct + '%';
+                    if (rankEl)  rankEl.textContent = rankIcon(i);
+                }
+
+                grid.appendChild(card); // Переставляем в правильный порядок
+            });
+        }
+
+        function rankIcon(i) {
+            if (i === 0) return '🥇';
+            if (i === 1) return '🥈';
+            if (i === 2) return '🥉';
+            return '';
+        }
+
+        function buildCard(row, name, pct, i, isNew, tr) {
+            const icon = rankIcon(i);
+            return `
+                ${icon ? `<div class="rank-badge">${icon}</div>` : ''}
+                ${isNew ? `<div class="new-badge">${tr.newBadge}</div>` : ''}
+                <div class="popularity-bar">
+                    <div class="popularity-fill" style="width:${pct}%"></div>
+                </div>
+                <img class="card-img" src="" alt="${name}" loading="lazy">
+                <div class="card-footer">
+                    <div class="card-name" title="${name}">${name}</div>
+                    <div class="card-likes">❤️ ${row.count || 0}</div>
+                </div>
+            `;
+        }
+
+        /* ============================================================
+           ИНИЦИАЛИЗАЦИЯ
+        ============================================================ */
+        applyLang(currentLang);
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
