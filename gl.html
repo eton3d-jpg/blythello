@@ -91,82 +91,6 @@
         }
         .lang-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
 
-        /* ===== ЦЕНТРАЛЬНАЯ КНОПКА (КРАСНАЯ ЗОНА) ===== */
-        .top-contact-container {
-            display: flex;
-            justify-content: center;
-            margin: 10px auto 20px;
-            position: relative;
-            background: rgba(255, 0, 0, 0.05); /* Еле заметный красный фон для обозначения зоны */
-            padding: 15px 0;
-            border-radius: 50px;
-        }
-
-        .top-contact-btn {
-            background: linear-gradient(145deg, var(--purple), #a05ee5);
-            border: 2px solid rgba(255,255,255,0.5);
-            color: white;
-            padding: 12px 40px;
-            border-radius: 60px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.25s;
-            box-shadow: 0 8px 20px rgba(136,84,208,0.5);
-            backdrop-filter: blur(4px);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .top-contact-btn:hover {
-            background: linear-gradient(145deg, #9b6ad9, #b17eed);
-            transform: scale(1.03);
-            box-shadow: 0 12px 28px rgba(136,84,208,0.7);
-        }
-
-        .top-contact-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: scale(0.98);
-            box-shadow: 0 4px 12px rgba(136,84,208,0.3);
-        }
-
-        /* Анимация конверта (стартует прямо с места кнопки) */
-        .envelope-fly {
-            position: fixed;
-            font-size: 2.5rem;
-            pointer-events: none;
-            z-index: 99999;
-            filter: drop-shadow(0 0 15px #ffd700);
-            animation: flyFromSpot 1.8s ease-in forwards;
-            transform-origin: center center;
-        }
-
-        @keyframes flyFromSpot {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) rotate(0deg) scale(1);
-            }
-            20% {
-                transform: translate(10px, -60px) rotate(5deg) scale(1.2);
-            }
-            50% {
-                transform: translate(30px, -180px) rotate(15deg) scale(1.3);
-            }
-            80% {
-                opacity: 0.8;
-                transform: translate(60px, -400px) rotate(25deg) scale(1.1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(100px, -700px) rotate(35deg) scale(0.8);
-            }
-        }
-
         /* ===== ВКЛАДКИ ===== */
         .tabs {
             display: flex;
@@ -446,6 +370,37 @@
             50% { background: linear-gradient(145deg, #f6d365, #fda085); color: #2d3436; }
         }
 
+        /* Анимация конверта (только в модальном окне) */
+        .envelope-fly {
+            position: fixed;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 100000;
+            filter: drop-shadow(0 0 15px #ffd700);
+            animation: flyFromModal 1.8s ease-in forwards;
+        }
+
+        @keyframes flyFromModal {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            20% {
+                transform: translate(10px, -60px) rotate(5deg) scale(1.2);
+            }
+            50% {
+                transform: translate(30px, -180px) rotate(15deg) scale(1.3);
+            }
+            80% {
+                opacity: 0.8;
+                transform: translate(60px, -400px) rotate(25deg) scale(1.1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(100px, -700px) rotate(35deg) scale(0.8);
+            }
+        }
+
         /* ===== LOADER ===== */
         .loader-wrap { text-align: center; padding: 80px 20px; }
         .spinner {
@@ -485,8 +440,6 @@
             .modal-content { max-width: 92vw; }
             .modal-footer { flex-direction: column; text-align: center; padding: 15px; }
             .contact-btn { width: 100%; }
-            .top-contact-btn { font-size: 0.9rem; padding: 10px 24px; }
-            .top-contact-container { padding: 10px 0; }
         }
     </style>
 </head>
@@ -494,7 +447,7 @@
 
     <!-- Верхняя панель: назад + языки -->
     <div class="top-bar">
-        <a href="index.html" class="back-btn" id="back-btn">← На главную</a>
+        <a href="index.html" class="back-btn" id="back-btn">← Back to main</a>
         <div class="language-selector">
             <button class="lang-btn" data-lang="en">EN</button>
             <button class="lang-btn" data-lang="de">DE</button>
@@ -507,61 +460,56 @@
     <div class="header">
         <div class="logo">Blythello.com</div>
         <h1 id="page-title">❤️ Liked Gallery</h1>
-        <p class="subtitle" id="page-subtitle">最もいいねされた作品</p>
-    </div>
-
-    <!-- 🔮 КНОПКА В КРАСНОЙ ЗОНЕ (ВСЕГДА НАВЕРХУ) -->
-    <div class="top-contact-container">
-        <button class="top-contact-btn" id="topContactBtn">🔮 Künstler kontaktieren</button>
+        <p class="subtitle" id="page-subtitle">The most liked works of our artists</p>
     </div>
 
     <!-- Вкладки -->
     <div class="tabs">
-        <button class="tab-btn active" data-mode="popular" id="tab-popular" onclick="switchMode('popular')">🏆 <span id="tab-popular-label">人気順</span></button>
-        <button class="tab-btn" data-mode="recent" id="tab-recent" onclick="switchMode('recent')">🕐 <span id="tab-recent-label">最新50件</span></button>
+        <button class="tab-btn active" data-mode="popular" id="tab-popular" onclick="switchMode('popular')">🏆 <span id="tab-popular-label">By popularity</span></button>
+        <button class="tab-btn" data-mode="recent" id="tab-recent" onclick="switchMode('recent')">🕐 <span id="tab-recent-label">last 50</span></button>
     </div>
 
     <!-- Счётчики -->
     <div class="counter-bar">
         <div class="counter-pill">
             <div class="num" id="cnt-photos">—</div>
-            <div class="lbl" id="lbl-photos">いいねされた<br>写真</div>
+            <div class="lbl" id="lbl-photos">photos<br>liked</div>
         </div>
         <div class="counter-pill">
             <div class="num" id="cnt-total">—</div>
-            <div class="lbl" id="lbl-total">いいね<br>合計</div>
+            <div class="lbl" id="lbl-total">total<br>likes</div>
         </div>
         <div class="counter-pill">
             <div class="num" id="cnt-top">—</div>
-            <div class="lbl" id="lbl-top">最高<br>いいね数</div>
+            <div class="lbl" id="lbl-top">record<br>for photo</div>
         </div>
     </div>
 
     <!-- Контент -->
     <div id="loader-wrap" class="loader-wrap">
         <div class="spinner"></div>
-        <div class="loader-text-msg" id="loading-msg">読み込み中...</div>
+        <div class="loader-text-msg" id="loading-msg">Loading gallery…</div>
     </div>
 
     <div class="grid" id="grid" style="display:none"></div>
 
     <div class="empty-state" id="empty" style="display:none">
         <div class="icon">🎀</div>
-        <p id="empty-msg">まだいいねがありません。<br>最初にいいねしてみましょう！</p>
+        <p id="empty-msg">No likes yet.<br>Be the first!</p>
     </div>
 
     <div class="refresh-info">
-        <span class="refresh-dot"></span><span id="refresh-label">30秒ごとに自動更新</span>
+        <span class="refresh-dot"></span><span id="refresh-label">Auto-update every 30 seconds</span>
     </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО -->
+    <!-- МОДАЛЬНОЕ ОКНО (полноразмерное фото с кнопкой) -->
     <div id="modal" class="modal" onclick="if(event.target===this) closeModal()">
         <div class="modal-content" id="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <img class="modal-img" id="modal-img" src="" alt="">
             <div class="modal-footer">
                 <span class="modal-photo-name" id="modal-photo-name"></span>
-                <button class="contact-btn" id="contact-btn" onclick="handleContactRequest(this)">🔮 узнать контакт</button>
+                <button class="contact-btn" id="contact-btn">🔮 contact artist</button>
             </div>
         </div>
     </div>
@@ -582,7 +530,7 @@
                 subtitle:     'The most liked works of our artists',
                 back:         '← Back to main',
                 tabPopular:   'By popularity',
-                tabRecent:    'Last 50',
+                tabRecent:    'last 50',
                 lblPhotos:    'photos\nliked',
                 lblTotal:     'total\nlikes',
                 lblTop:       'record\nfor photo',
@@ -591,7 +539,6 @@
                 refreshLabel: 'Auto-update every 30 seconds',
                 newBadge:     'NEW',
                 contactBtn:   '🔮 contact artist',
-                modalContact: '🔮 contact artist',
                 accepted:     '✓ request accepted',
             },
             de: {
@@ -599,7 +546,7 @@
                 subtitle:     'Die beliebtesten Werke unserer Künstler',
                 back:         '← Zurück zur Hauptseite',
                 tabPopular:   'Nach Beliebtheit',
-                tabRecent:    'Letzte 50',
+                tabRecent:    'letzte 50',
                 lblPhotos:    'Fotos\ngeliked',
                 lblTotal:     'Likes\ngesamt',
                 lblTop:       'Rekord\nbei Foto',
@@ -608,7 +555,6 @@
                 refreshLabel: 'Automatische Aktualisierung alle 30 Sekunden',
                 newBadge:     'NEU',
                 contactBtn:   '🔮 Künstler kontaktieren',
-                modalContact: '🔮 Künstler kontaktieren',
                 accepted:     '✓ anfrage angenommen',
             },
             fr: {
@@ -625,7 +571,6 @@
                 refreshLabel: 'Mise à jour automatique toutes les 30 secondes',
                 newBadge:     'NOUVEAU',
                 contactBtn:   '🔮 contacter l\'artiste',
-                modalContact: '🔮 contacter l\'artiste',
                 accepted:     '✓ demande acceptée',
             },
             ja: {
@@ -642,7 +587,6 @@
                 refreshLabel: '30秒ごとに自動更新',
                 newBadge:     '新着',
                 contactBtn:   '🔮 作者コンタクト',
-                modalContact: '🔮 作者コンタクト',
                 accepted:     '✓ リクエスト完了',
             }
         };
@@ -671,16 +615,10 @@
             document.getElementById('lbl-total').innerHTML  = tr.lblTotal.replace('\n', '<br>');
             document.getElementById('lbl-top').innerHTML    = tr.lblTop.replace('\n', '<br>');
 
-            // обновить текст на верхней кнопке
-            const topBtn = document.getElementById('topContactBtn');
-            if (topBtn && !topBtn.disabled) {
-                topBtn.textContent = tr.contactBtn;
-            }
-
             // обновить текст на кнопке в модалке
             const modalBtn = document.getElementById('contact-btn');
             if (modalBtn && !modalBtn.disabled) {
-                modalBtn.textContent = tr.modalContact;
+                modalBtn.textContent = tr.contactBtn;
             }
 
             document.querySelectorAll('.new-badge').forEach(b => b.textContent = tr.newBadge);
@@ -828,7 +766,7 @@
         }
 
         /* ============================================================
-           МОДАЛКА
+           МОДАЛКА (с кнопкой контакта и конвертом)
         ============================================================ */
         const modal = document.getElementById('modal');
         const modalImg = document.getElementById('modal-img');
@@ -840,7 +778,7 @@
             modalPhotoName.textContent = name;
             contactBtn.disabled = false;
             contactBtn.classList.remove('blink-message');
-            contactBtn.textContent = t[currentLang].modalContact;
+            contactBtn.textContent = t[currentLang].contactBtn;
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
@@ -851,24 +789,12 @@
             modalImg.src = '';
         }
 
-        function handleContactRequest(btn) {
-            const tr = t[currentLang];
-            btn.disabled = true;
-            btn.textContent = tr.accepted;
-            btn.classList.add('blink-message');
-            setTimeout(() => {
-                btn.classList.remove('blink-message');
-            }, 1500);
-        }
-
-        /* ============================================================
-           ВЕРХНЯЯ КНОПКА - конверт стартует прямо с кнопки
-        ============================================================ */
-        document.getElementById('topContactBtn').addEventListener('click', function(e) {
+        // Обработка нажатия на кнопку в модалке с анимацией конверта
+        contactBtn.addEventListener('click', function(e) {
             const btn = this;
             const tr = t[currentLang];
             
-            // Получаем точные координаты кнопки
+            // Получаем координаты кнопки
             const rect = btn.getBoundingClientRect();
             
             // Создаём конверт
@@ -876,7 +802,7 @@
             envelope.className = 'envelope-fly';
             envelope.textContent = '✉️💌';
             
-            // Устанавливаем позицию прямо на кнопку (центр кнопки)
+            // Устанавливаем позицию прямо на кнопку
             envelope.style.left = (rect.left + rect.width / 2 - 20) + 'px';
             envelope.style.top = (rect.top + rect.height / 2 - 20) + 'px';
             envelope.style.position = 'fixed';
@@ -886,21 +812,22 @@
             // Блокируем кнопку
             btn.disabled = true;
             
-            // Удаляем конверт и возвращаем кнопку в активное состояние
+            // Меняем текст на "принято" с миганием
+            btn.textContent = tr.accepted;
+            btn.classList.add('blink-message');
+            
+            // Удаляем конверт через 1.7 сек
             setTimeout(() => {
                 envelope.remove();
-                btn.textContent = tr.accepted;
-                btn.classList.add('blink-message');
-                
-                setTimeout(() => {
-                    btn.classList.remove('blink-message');
-                    btn.textContent = tr.contactBtn;
-                    btn.disabled = false;
-                }, 1500);
             }, 1700);
+            
+            // Убираем мигание через 1.5 сек (текст остаётся "принято")
+            setTimeout(() => {
+                btn.classList.remove('blink-message');
+            }, 1500);
         });
 
-        // Закрытие модалки по ESC
+        // закрытие по ESC
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.style.display === 'flex') {
                 closeModal();
