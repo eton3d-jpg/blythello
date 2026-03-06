@@ -69,17 +69,14 @@
             border: 1px solid var(--blush);
         }
 
-        /* ===== LEFT SIDEBAR с аватаром ===== */
         .left-info-sidebar {
-            flex: 0 0 90px;
+            flex: 0 0 50px;
             background: var(--white);
             border-radius: 20px;
             padding: 16px 8px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            gap: 16px;
+            justify-content: center;
             opacity: 0;
             transition: opacity 1s ease;
             align-self: center;
@@ -87,25 +84,34 @@
             box-shadow: 0 4px 16px var(--shadow);
         }
 
-        /* Аватар в верхней части левой панели */
-        .sidebar-avatar {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
+        /* ===== АВАТАР В HALL OF FAME ===== */
+        .hof-avatar-wrap {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hof-avatar {
+            width: 100%;
+            max-width: 220px;
+            aspect-ratio: 1 / 1;
+            border-radius: 20px;
             overflow: hidden;
             border: 2px solid var(--blush);
-            box-shadow: 0 4px 12px var(--shadow);
-            flex-shrink: 0;
+            box-shadow: 0 6px 20px var(--shadow);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .sidebar-avatar:hover {
-            transform: scale(1.07);
-            box-shadow: 0 6px 18px rgba(212,132,154,0.35);
+        .hof-avatar:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 28px rgba(212,132,154,0.3);
         }
-        .sidebar-avatar img {
+        .hof-avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .vertical-text {
@@ -637,9 +643,13 @@
             .hall-of-fame-sidebar { 
                 flex: none; 
                 width: 100%; 
-                max-height: 220px; 
+                max-height: none;
                 border-radius: 30px; 
                 padding: 20px; 
+            }
+            .hof-avatar {
+                max-width: 100%;
+                border-radius: 16px;
             }
             .sidebar-title { 
                 font-size: 1rem; 
@@ -674,9 +684,6 @@
     <div class="wrapper">
         <!-- ===== ЛЕВАЯ ПАНЕЛЬ С АВАТАРОМ ===== -->
         <aside class="left-info-sidebar" id="left-banner">
-            <div class="sidebar-avatar">
-                <img src="22.png" alt="Blythello Avatar">
-            </div>
             <div class="vertical-text" data-key="leftBanner">
                 To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.
             </div>
@@ -714,7 +721,7 @@
                         <span class="announce-icon">🎀</span>
                         <p class="announce-text" id="announce-text">
                             If you want to participate in the Liked Gallery,<br>
-                            <a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>
+                            <a href="/cdn-cgi/l/email-protection#ec8e8095988489808083ac8e8095988489808083c28f8381" class="announce-email"><span class="__cf_email__" data-cfemail="84e6e8fdf0ece1e8e8ebc4e6e8fdf0ece1e8e8ebaae7ebe9">[email&#160;protected]</span></a><br>
                             Subject: <span class="announce-subject" id="announce-subject">I want to participate</span><br>
                             We will send you the instructions.
                         </p>
@@ -729,7 +736,7 @@
                         <p class="contest-rules" data-key="rules">One participant is chosen every 24 hours.</p>
                         <div class="email-info">
                             <strong data-key="emailTitle">Send the full name and suggestions to:</strong><br>
-                            <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
+                            <a href="/cdn-cgi/l/email-protection#6b0907121f030e0707042b0907121f030e07070445080406" class="email-link"><span class="__cf_email__" data-cfemail="e587899c918d8089898aa587899c918d8089898acb868a88">[email&#160;protected]</span></a>
                         </div>
                     </div>
 
@@ -766,10 +773,16 @@
                     <span class="winner-date">20.02.2026</span>
                 </li>
             </ul>
+            <!-- АВАТАР -->
+            <div class="hof-avatar-wrap">
+                <div class="hof-avatar">
+                    <img src="22.png" alt="Blythello">
+                </div>
+            </div>
         </aside>
     </div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
 
@@ -1017,15 +1030,4 @@
             updateLabels();
             
             setTimeout(() => {
-                nav.style.opacity = '1';
-                if (!isMobile()) leftBanner.style.opacity = '1';
-                fetchImageList();
-                if (img.complete && img.naturalHeight > 0) syncBannerHeight();
-            }, 2500);
-        });
-
-        window.addEventListener('resize', syncBannerHeight);
-        img.addEventListener('load', syncBannerHeight);
-    </script>
-</body>
-</html>
+       
