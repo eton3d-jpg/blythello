@@ -69,19 +69,43 @@
             border: 1px solid var(--blush);
         }
 
+        /* ===== LEFT SIDEBAR с аватаром ===== */
         .left-info-sidebar {
-            flex: 0 0 50px;
+            flex: 0 0 90px;
             background: var(--white);
             border-radius: 20px;
             padding: 16px 8px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            gap: 16px;
             opacity: 0;
             transition: opacity 1s ease;
             align-self: center;
             border: 1px solid var(--blush);
             box-shadow: 0 4px 16px var(--shadow);
+        }
+
+        /* Аватар в верхней части левой панели */
+        .sidebar-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--blush);
+            box-shadow: 0 4px 12px var(--shadow);
+            flex-shrink: 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .sidebar-avatar:hover {
+            transform: scale(1.07);
+            box-shadow: 0 6px 18px rgba(212,132,154,0.35);
+        }
+        .sidebar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .vertical-text {
@@ -209,7 +233,6 @@
             justify-content: center; 
         }
 
-        /* ===== КНОПКА ГАЛЕРЕИ ===== */
         .gallery-likes-btn {
             display: inline-flex;
             align-items: center;
@@ -246,7 +269,6 @@
             45%       { transform: scale(1.15); }
         }
 
-        /* ===== ОБЪЯВЛЕНИЕ ===== */
         .announce-box {
             background: var(--white);
             border: 2px solid var(--blush);
@@ -313,7 +335,6 @@
             text-decoration: underline; 
         }
 
-        /* ===== ОСТАЛЬНЫЕ СТИЛИ ===== */
         .main-title {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
@@ -651,7 +672,11 @@
 <body>
 
     <div class="wrapper">
+        <!-- ===== ЛЕВАЯ ПАНЕЛЬ С АВАТАРОМ ===== -->
         <aside class="left-info-sidebar" id="left-banner">
+            <div class="sidebar-avatar">
+                <img src="22.png" alt="Blythello Avatar">
+            </div>
             <div class="vertical-text" data-key="leftBanner">
                 To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.
             </div>
@@ -680,13 +705,11 @@
 
                 <div class="right-side">
 
-                    <!-- КНОПКА ГАЛЕРЕИ -->
                     <a href="gl.html" class="gallery-likes-btn" id="gallery-likes-btn">
                         <span class="btn-icon">❤️</span>
                         <span id="gallery-btn-text">Liked Gallery</span>
                     </a>
 
-                    <!-- ОБЪЯВЛЕНИЕ -->
                     <div class="announce-box">
                         <span class="announce-icon">🎀</span>
                         <p class="announce-text" id="announce-text">
@@ -787,7 +810,6 @@
             } catch (e) { console.error('Like error:', e); return null; }
         }
 
-        /* ===== TRANSLATIONS ===== */
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
@@ -859,8 +881,7 @@
             }
         };
 
-        /* ===== APP STATE ===== */
-        let currentLang = 'en'; // Установлен английский по умолчанию
+        let currentLang = 'en';
         let imageList   = [];
         let currentPath = '';
 
@@ -981,12 +1002,9 @@
         window.addEventListener('load', () => {
             animateProgress();
             
-            // Принудительно устанавливаем английский язык при загрузке
-            // (игнорируем сохраненный язык)
             currentLang = 'en';
-            localStorage.setItem('blythello_lang', 'en'); // Сохраняем английский как предпочтительный
+            localStorage.setItem('blythello_lang', 'en');
             
-            // Применяем английский ко всем элементам
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === 'en');
             });
@@ -1007,8 +1025,6 @@
         });
 
         window.addEventListener('resize', syncBannerHeight);
-        
-        // Добавляем обработчик загрузки изображения для синхронизации высоты
         img.addEventListener('load', syncBannerHeight);
     </script>
 </body>
