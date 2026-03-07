@@ -6,9 +6,11 @@
     <title>Blythello - Hall of Fame</title>
     <link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "dd2f1265116944c89eea4ee4724f9a6d"}'></script>
     <!-- End Cloudflare Web Analytics -->
+    
     <style>
         :root {
             --cream:   #FDF6EE;
@@ -392,7 +394,6 @@
         }
         .like-pop { animation: likePopup 0.3s ease; }
 
-        /* ===== АВАТАР В HALL OF FAME — единственное новое ===== */
         .hof-avatar-wrap {
             margin-top: 20px;
         }
@@ -405,14 +406,12 @@
             box-shadow: 0 6px 20px var(--shadow);
         }
 
-        /* ===== TABLET ===== */
         @media (max-width: 1024px) and (min-width: 769px) {
             .left-info-sidebar { display: none; }
             .hall-of-fame-sidebar { flex: 0 0 220px; }
             .main-title { font-size: 1.6rem; }
         }
 
-        /* ===== MOBILE ===== */
         @media (max-width: 768px) {
             body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; align-items: flex-start; padding: 12px; }
             .wrapper { flex-direction: column; height: auto; gap: 16px; padding: 0; }
@@ -540,7 +539,6 @@
                     <span class="winner-date">20.02.2026</span>
                 </li>
             </ul>
-            <!-- ЕДИНСТВЕННОЕ ДОБАВЛЕНИЕ: аватар под списком -->
             <div class="hof-avatar-wrap">
                 <div class="hof-avatar">
                     <img src="22.png" alt="Blythello">
