@@ -108,6 +108,24 @@
             position: relative;
         }
 
+        .author-message {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--rose);
+            margin-bottom: 15px;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 100px;
+            border: 2px solid var(--blush);
+            box-shadow: 0 4px 12px var(--shadow);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            text-align: center;
+            backdrop-filter: blur(4px);
+            width: fit-content;
+            max-width: 90%;
+        }
+
         .image-container {
             position: relative;
             width: 100%;
@@ -334,6 +352,7 @@
             .logo { font-size: 22px; }
             .content { flex-direction: column; gap: 20px; padding: 20px; overflow: visible; height: auto; align-items: stretch; }
             .left-side { height: auto; width: 100%; }
+            .author-message { font-size: 0.95rem; padding: 6px 16px; margin-bottom: 12px; }
             .image-container { width: 100%; }
             .doll-face-animation { max-height: 50vh; width: auto; max-width: 100%; }
             .photo-overlay { border-radius: 30px; }
@@ -357,6 +376,7 @@
             .lock-icon { font-size: 2.5rem; }
             .overlay-text { font-size: 0.9rem; padding: 4px 14px; }
             .lang-btn    { padding: 4px 10px; font-size: 0.7rem; }
+            .author-message { font-size: 0.85rem; padding: 4px 12px; }
         }
     </style>
 </head>
@@ -376,6 +396,7 @@
 
             <main class="content">
                 <div class="left-side">
+                    <div class="author-message" data-key="authorMessage">The author did not appreciate the opportunity given to him</div>
                     <div class="image-container">
                         <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
                         <div class="photo-overlay">
@@ -432,6 +453,46 @@
     </div>
 
     <script>
+        const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
+
+        async function sbFetch(path, method = 'GET', body = null) {
+            const opts = {
+                method,
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': 'Bearer ' + SUPABASE_KEY,
+                    'Content-Type': 'application/json',
+                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=representation' : 'return=representation'
+                }
+            };
+            if (body) opts.body = JSON.stringify(body);
+            const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
+            if (!res.ok) throw new Error(await res.text());
+            return res.json();
+        }
+
+        async function getLikes(photo) {
+            try {
+                const data = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=count`);
+                return data[0]?.count ?? 0;
+            } catch { return 0; }
+        }
+
+        async function addLike(photo) {
+            try {
+                const rows = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=id,count`);
+                if (rows.length > 0) {
+                    const { id, count } = rows[0];
+                    await sbFetch(`likes?id=eq.${id}`, 'PATCH', { count: count + 1 });
+                    return count + 1;
+                } else {
+                    await sbFetch('likes', 'POST', { photo, count: 1 });
+                    return 1;
+                }
+            } catch (e) { console.error('Like error:', e); return null; }
+        }
+
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
@@ -441,6 +502,7 @@
                 like: "❤️ Like", next: "Next ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Content", step4: "○ Launch",
                 announceText: 'If you want to participate in the Liked Gallery,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Subject: <span class="announce-subject">I want to participate</span><br>We will send you the instructions.',
+                authorMessage: "The author did not appreciate the opportunity given to him",
             },
             de: {
                 title: "WIR SIND FAST BEREIT!",
@@ -450,6 +512,7 @@
                 like: "❤️ Like", next: "Weiter ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Inhalt", step4: "○ Start",
                 announceText: 'Wenn Sie an der Liked-Galerie teilnehmen möchten,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Betreff: <span class="announce-subject">Ich möchte teilnehmen</span><br>Wir senden Ihnen die Anleitung.',
+                authorMessage: "Der Autor hat die ihm gebotene Möglichkeit nicht zu schätzen gewusst",
             },
             fr: {
                 title: "NOUS SOMMES PRESQUE PRÊTS !",
@@ -459,6 +522,7 @@
                 like: "❤️ Like", next: "Suivant ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Contenu", step4: "○ Lancer",
                 announceText: 'Pour participer à la Galerie des favoris,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Objet : <span class="announce-subject">Je veux participer</span><br>Nous vous enverrons les instructions.',
+                authorMessage: "L'auteur n'a pas apprécié l'opportunité qui lui a été donnée",
             },
             ja: {
                 title: "もうすぐ準備完了です！",
@@ -468,27 +532,73 @@
                 like: "❤️ いいね", next: "次へ ✨",
                 step1: "✓ デザイン", step2: "✓ バックエンド", step3: "⧖ コンテンツ", step4: "○ 公開",
                 announceText: 'ギャラリーに参加したい方は、<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a> までメールをお送りください。<br>件名：<span class="announce-subject">参加希望</span><br>参加方法をご案内いたします。',
+                authorMessage: "作者は与えられた機会を評価しなかった",
             }
         };
 
         let currentLang = 'en';
+        let imageList   = [];
+        let currentPath = '';
 
+        const img            = document.getElementById('main-photo');
         const nav            = document.getElementById('gallery-controls');
         const likeBtn        = document.getElementById('like-btn');
         const nextBtn        = document.getElementById('next-btn');
+        const likeCountEl    = document.getElementById('like-count');
         const progressFill   = document.getElementById('progress-fill');
         const announceText   = document.getElementById('announce-text');
 
-        // Пустые обработчики - кнопки нажимаются, но ничего не делают
+        // Функции для работы с лайками (оставлены для совместимости, но likeBtn не использует их)
+        function hasLiked(path) {
+            try { return JSON.parse(localStorage.getItem('blythello_likes') || '[]').includes(path); }
+            catch { return false; }
+        }
+
+        function setCount(n) {
+            // Не меняем счетчик, всегда 0
+        }
+
+        async function getNewPhoto() {
+            if (!imageList.length) return;
+            const randomName = imageList[Math.floor(Math.random() * imageList.length)];
+            const fileName   = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
+            const path       = 'FG/' + fileName;
+
+            img.style.opacity = '0';
+
+            setTimeout(async () => {
+                img.src = path;
+                img.onload  = () => { 
+                    img.style.opacity = '1'; 
+                };
+                img.onerror = () => { 
+                    img.style.opacity = '1'; 
+                };
+                currentPath = path;
+                // Не обновляем likeBtn и счетчик
+            }, 500);
+        }
+
+        // Like ничего не делает
         likeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             // Никакого действия
         });
 
-        nextBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // Никакого действия
-        });
+        // Next работает - переключает фото
+        nextBtn.addEventListener('click', getNewPhoto);
+
+        async function fetchImageList() {
+            try {
+                const response = await fetch('FG/1.txt');
+                if (!response.ok) throw new Error('File not found');
+                const text = await response.text();
+                imageList = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                if (imageList.length > 0) getNewPhoto();
+            } catch (err) {
+                console.warn('Could not load FG/1.txt:', err.message);
+            }
+        }
 
         function updateLabels() {
             const t = translations[currentLang];
@@ -526,6 +636,7 @@
 
             setTimeout(() => {
                 nav.style.opacity = '1';
+                fetchImageList();
             }, 2500);
         });
     </script>
