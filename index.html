@@ -43,11 +43,12 @@
             min-height: 100vh;
             margin: 0 auto;
             padding: 24px;
-            align-items: stretch;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
-            flex: 3;
+            flex: 0 1 1100px;
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(20px);
             border-radius: 40px;
@@ -56,45 +57,6 @@
             flex-direction: column;
             overflow: hidden;
             border: 1px solid var(--blush);
-        }
-
-        .hall-of-fame-sidebar {
-            flex: 0 0 280px;
-            background: var(--white);
-            border-radius: 40px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            box-shadow: 0 4px 24px var(--shadow);
-            border: 1px solid var(--blush);
-        }
-
-        .left-info-sidebar {
-            flex: 0 0 50px;
-            background: var(--white);
-            border-radius: 20px;
-            padding: 16px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 1s ease;
-            align-self: center;
-            border: 1px solid var(--blush);
-            box-shadow: 0 4px 16px var(--shadow);
-        }
-
-        .vertical-text {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
-            text-align: center;
-            color: var(--mauve);
-            font-size: 0.85rem;
-            white-space: normal;
-            line-height: 1.4;
-            font-weight: 400;
-            letter-spacing: 0.5px;
         }
 
         .header {
@@ -135,7 +97,6 @@
             padding: 30px;
             align-items: center;
             flex: 1;
-            overflow: hidden;
         }
 
         .left-side {
@@ -144,7 +105,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            position: relative;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         .doll-face-animation {
@@ -156,6 +124,55 @@
             animation: magicReveal 2s ease-out forwards;
             box-shadow: 0 12px 40px var(--shadow);
             border: 2px solid var(--blush);
+            display: block;
+        }
+
+        /* Матовая пленка с замком */
+        .photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            background: rgba(44, 26, 34, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: none;
+            border: 2px solid var(--blush);
+            box-shadow: 0 12px 40px var(--shadow);
+        }
+
+        .lock-icon {
+            font-size: 4rem;
+            color: var(--white);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 8px var(--shadow));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .overlay-text {
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 24px;
+            border-radius: 100px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3);
+            font-family: 'Playfair Display', serif;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
         @keyframes magicReveal {
@@ -170,6 +187,8 @@
             opacity: 0;
             transition: 0.5s ease;
             align-items: center;
+            position: relative;
+            z-index: 20;
         }
 
         .like-counter {
@@ -281,20 +300,11 @@
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 20px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             box-shadow: 0 4px 20px var(--shadow);
             border: 1px solid var(--blush);
         }
-        .status-highlight { color: var(--rose); font-weight: 600; margin: 12px 0 8px; font-size: 0.95rem; }
-        .contest-rules {
-            font-size: 0.8rem;
-            color: var(--mauve);
-            font-style: italic;
-            background: var(--soft);
-            padding: 10px 14px;
-            border-radius: 12px;
-            margin: 12px 0;
-        }
+        
         .email-info {
             background: var(--soft);
             padding: 16px;
@@ -328,49 +338,6 @@
         .progress-steps { display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.7rem; color: var(--mauve); }
         .progress-steps span.done { color: var(--rose); font-weight: 600; }
 
-        .thanks-note {
-            margin-top: auto;
-            padding-top: 16px;
-            border-top: 1px solid var(--blush);
-            color: var(--mauve);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .sidebar-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--deep);
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--blush);
-            line-height: 1.3;
-        }
-        .winner-list { list-style: none; padding: 0; margin: 0; }
-        .winner-item {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--deep);
-            padding: 12px 0;
-            border-bottom: 1px solid var(--soft);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .winner-item:last-child { border-bottom: none; }
-        .winner-date {
-            font-size: 0.7rem;
-            color: var(--mauve);
-            font-weight: 400;
-            background: var(--soft);
-            padding: 4px 8px;
-            border-radius: 100px;
-        }
-
         .btn-gallery {
             padding: 10px 24px;
             border-radius: 100px;
@@ -394,34 +361,23 @@
         }
         .like-pop { animation: likePopup 0.3s ease; }
 
-        .hof-avatar-wrap {
-            margin-top: 20px;
-        }
-        .hof-avatar img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 20px;
-            border: 2px solid var(--blush);
-            box-shadow: 0 6px 20px var(--shadow);
-        }
-
         @media (max-width: 1024px) and (min-width: 769px) {
-            .left-info-sidebar { display: none; }
-            .hall-of-fame-sidebar { flex: 0 0 220px; }
             .main-title { font-size: 1.6rem; }
         }
 
         @media (max-width: 768px) {
             body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; align-items: flex-start; padding: 12px; }
             .wrapper { flex-direction: column; height: auto; gap: 16px; padding: 0; }
-            .left-info-sidebar { display: none; }
             .container { border-radius: 30px; padding: 0; overflow: visible; height: auto; }
             .header { padding: 16px 20px; }
             .logo { font-size: 22px; }
             .content { flex-direction: column; gap: 20px; padding: 20px; overflow: visible; height: auto; align-items: stretch; }
             .left-side { height: auto; width: 100%; }
+            .image-container { width: 100%; }
             .doll-face-animation { max-height: 50vh; width: auto; max-width: 100%; }
+            .photo-overlay { border-radius: 30px; }
+            .lock-icon { font-size: 3rem; }
+            .overlay-text { font-size: 1rem; padding: 6px 18px; }
             .gallery-nav { justify-content: center; flex-wrap: wrap; }
             .right-side { justify-content: flex-start; overflow: visible; }
             .main-title { font-size: 1.5rem; }
@@ -429,19 +385,17 @@
             .promo-box  { padding: 18px; margin-bottom: 12px; }
             .loader-container { margin: 12px 0; border-radius: 40px; }
             .progress-steps { font-size: 0.65rem; }
-            .thanks-note { margin-top: 16px; font-size: 0.75rem; }
-            .hall-of-fame-sidebar { flex: none; width: 100%; max-height: none; border-radius: 30px; padding: 20px; }
-            .sidebar-title { font-size: 1rem; margin-bottom: 12px; }
-            .winner-item { font-size: 0.85rem; }
             .gallery-likes-btn { align-self: center; font-size: 0.85rem; padding: 10px 22px; }
             .announce-box { margin-bottom: 16px; padding: 16px; }
         }
 
         @media (max-width: 400px) {
             .main-title  { font-size: 1.2rem; }
-            .promo-box   { font-size: 0.82rem; }
+            .promo-box   { font-size: 0.85rem; }
             .btn-gallery { padding: 8px 18px; font-size: 0.82rem; }
             .doll-face-animation { max-height: 45vh; }
+            .lock-icon { font-size: 2.5rem; }
+            .overlay-text { font-size: 0.9rem; padding: 4px 14px; }
             .lang-btn    { padding: 4px 10px; font-size: 0.7rem; }
             .gallery-likes-btn { font-size: 0.8rem; padding: 8px 18px; }
         }
@@ -450,12 +404,6 @@
 <body>
 
     <div class="wrapper">
-        <aside class="left-info-sidebar" id="left-banner">
-            <div class="vertical-text" data-key="leftBanner">
-                To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.
-            </div>
-        </aside>
-
         <div class="container">
             <div class="header">
                 <div class="logo">Blythe<span>llo</span></div>
@@ -469,7 +417,13 @@
 
             <main class="content">
                 <div class="left-side">
-                    <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
+                    <div class="image-container">
+                        <img id="main-photo" src="Gemini_Generated_Image_mce530mce530mce5.png" alt="Blythe Doll" class="doll-face-animation">
+                        <div class="photo-overlay">
+                            <div class="lock-icon">🔒</div>
+                            <div class="overlay-text">Blythe World</div>
+                        </div>
+                    </div>
                     <div class="gallery-nav" id="gallery-controls">
                         <button id="like-btn" class="btn-gallery btn-like" data-key="like">❤️ Like</button>
                         <div class="like-counter" id="like-counter">❤️ <span id="like-count">—</span></div>
@@ -497,11 +451,8 @@
                     <p class="subtitle" data-key="subtitle">The world of Blythe is coming soon.</p>
 
                     <div class="promo-box">
-                        <p data-key="promo1">Go to Instagram, find <strong>@**riteradolls</strong> and send the full name to our email.</p>
-                        <p class="status-highlight" data-key="promo2">By doing this, you can become a <strong>Founding Member</strong> and enter our 'Hall of Fame'!</p>
-                        <p class="contest-rules" data-key="rules">One participant is chosen every 24 hours.</p>
                         <div class="email-info">
-                            <strong data-key="emailTitle">Send the full name and suggestions to:</strong><br>
+                            <strong data-key="emailTitle">Отзывы и предложения пишите:</strong><br>
                             <a href="mailto:blythello@blythello.com" class="email-link">blythello@blythello.com</a>
                         </div>
                     </div>
@@ -521,30 +472,9 @@
                             <span data-key="step4">○ Launch</span>
                         </div>
                     </div>
-
-                    <div class="thanks-note">
-                        <span data-key="thanks">The site administration thanks</span>
-                        <a href="https://instagram.com/moriteradolls" target="_blank" style="color:var(--rose); font-weight:600; text-decoration:none;">@**riteradolls</a>
-                        <span data-key="thanks2">for her intellectual contribution.</span>
-                    </div>
                 </div>
             </main>
         </div>
-
-        <aside class="hall-of-fame-sidebar">
-            <div class="sidebar-title" data-key="sidebarTitle">Those who have been with us since the first days</div>
-            <ul class="winner-list">
-                <li class="winner-item">
-                    <span>1. @ne0vdarks</span>
-                    <span class="winner-date">20.02.2026</span>
-                </li>
-            </ul>
-            <div class="hof-avatar-wrap">
-                <div class="hof-avatar">
-                    <img src="22.png" alt="Blythello">
-                </div>
-            </div>
-        </aside>
     </div>
 
     <script>
@@ -592,15 +522,8 @@
             en: {
                 title: "WE'RE ALMOST READY!",
                 subtitle: "The world of Blythe is coming soon.",
-                promo1: "Go to Instagram, find <strong>@**riteradolls</strong> and send the full name to our email.",
-                promo2: "By doing this, you can become a <strong>Founding Member</strong> and enter our 'Hall of Fame'!",
-                rules: "One participant is chosen every 24 hours.",
-                emailTitle: "Send the full name and suggestions to:",
+                emailTitle: "Send your feedback and suggestions to:",
                 loading: "LAUNCHING SOON...",
-                thanks: "The site administration thanks",
-                thanks2: "for her intellectual contribution.",
-                sidebarTitle: "Those who have been with us since the first days",
-                leftBanner: "To keep you entertained while we're getting the site up and running smoothly, we've made it possible to view the work of our best artists.",
                 like: "❤️ Like", liked: "❤️ Liked", next: "Next ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Content", step4: "○ Launch",
                 galleryBtn: "Liked Gallery",
@@ -609,15 +532,8 @@
             de: {
                 title: "WIR SIND FAST BEREIT!",
                 subtitle: "Die Welt von Blythe kommt bald.",
-                promo1: "Gehen Sie zu Instagram, finden Sie <strong>@**riteradolls</strong>.",
-                promo2: "Werden Sie <strong>Gründungsmitglied</strong> in unserer Hall of Fame!",
-                rules: "Alle 24 Stunden wird ein Teilnehmer ausgewählt.",
-                emailTitle: "Name und Vorschläge an:",
+                emailTitle: "Senden Sie Ihr Feedback und Vorschläge an:",
                 loading: "STARTET BALD...",
-                thanks: "Die Administration dankt",
-                thanks2: "für ihren Beitrag.",
-                sidebarTitle: "Unterstützer der ersten Stunde",
-                leftBanner: "Um Sie zu unterhalten, während wir die Website reibungslos zum Laufen bringen, haben wir es ermöglicht, die Werke unserer besten Künstler zu sehen.",
                 like: "❤️ Like", liked: "❤️ Geliked", next: "Weiter ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Inhalt", step4: "○ Start",
                 galleryBtn: "Liked-Galerie",
@@ -626,15 +542,8 @@
             fr: {
                 title: "NOUS SOMMES PRESQUE PRÊTS !",
                 subtitle: "Le monde de Blythe arrive bientôt.",
-                promo1: "Allez sur Instagram, trouvez <strong>@**riteradolls</strong>.",
-                promo2: "Devenez un <strong>membre fondateur</strong> !",
-                rules: "Un participant est choisi toutes les 24 heures.",
-                emailTitle: "Nom et suggestions à :",
+                emailTitle: "Envoyez vos commentaires et suggestions à :",
                 loading: "LANCEMENT IMMINENT...",
-                thanks: "L'administration remercie",
-                thanks2: "pour sa contribution.",
-                sidebarTitle: "Ceux qui sont avec nous depuis le début",
-                leftBanner: "Pour vous divertir pendant que nous mettons le site en marche, nous avons permis de visionner les œuvres de nos meilleurs artistes.",
                 like: "❤️ Like", liked: "❤️ Aimé", next: "Suivant ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Contenu", step4: "○ Lancer",
                 galleryBtn: "Galerie des favoris",
@@ -643,15 +552,8 @@
             ja: {
                 title: "もうすぐ準備完了です！",
                 subtitle: "ブライスの世界が間もなく登場します。",
-                promo1: "Instagramにアクセスし、<strong>@**riteradolls</strong>を見つけて、そのフルネームをメールでお送りください。",
-                promo2: "これにより、<strong>創設メンバー</strong>として「殿堂」に名を刻むことができます！",
-                rules: "24時間ごとに1名の参加者が選ばれます。",
-                emailTitle: "フルネームとご提案をこちらまで：",
+                emailTitle: "フィードバックやご提案はこちらまで：",
                 loading: "近日公開...",
-                thanks: "サイト運営者は",
-                thanks2: "の知的貢献に感謝いたします。",
-                sidebarTitle: "初期から私たちを支えてくれている方々",
-                leftBanner: "サイトの立ち上げをスムーズに進めている間、皆様に楽しんでいただけるよう、最高のアーティストの作品を閲覧できるようにしました。",
                 like: "❤️ いいね", liked: "❤️ 済み", next: "次へ ✨",
                 step1: "✓ デザイン", step2: "✓ バックエンド", step3: "⧖ コンテンツ", step4: "○ 公開",
                 galleryBtn: "いいねギャラリー",
@@ -665,21 +567,12 @@
 
         const img            = document.getElementById('main-photo');
         const nav            = document.getElementById('gallery-controls');
-        const leftBanner     = document.getElementById('left-banner');
         const likeBtn        = document.getElementById('like-btn');
         const nextBtn        = document.getElementById('next-btn');
         const likeCountEl    = document.getElementById('like-count');
         const progressFill   = document.getElementById('progress-fill');
         const galleryBtnText = document.getElementById('gallery-btn-text');
         const announceText   = document.getElementById('announce-text');
-
-        function isMobile() { return window.innerWidth <= 768; }
-
-        function syncBannerHeight() {
-            if (!isMobile() && img.complete && img.naturalHeight > 0) {
-                leftBanner.style.height = img.offsetHeight + 'px';
-            }
-        }
 
         function hasLiked(path) {
             try { return JSON.parse(localStorage.getItem('blythello_likes') || '[]').includes(path); }
@@ -708,8 +601,12 @@
 
             setTimeout(async () => {
                 img.src = path;
-                img.onload  = () => { img.style.opacity = '1'; syncBannerHeight(); };
-                img.onerror = () => { img.style.opacity = '1'; };
+                img.onload  = () => { 
+                    img.style.opacity = '1'; 
+                };
+                img.onerror = () => { 
+                    img.style.opacity = '1'; 
+                };
                 currentPath      = path;
                 likeBtn.disabled = hasLiked(path);
                 updateLabels();
@@ -774,31 +671,15 @@
 
         window.addEventListener('load', () => {
             animateProgress();
-
-            currentLang = 'en';
-            localStorage.setItem('blythello_lang', 'en');
-
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === 'en');
-            });
-
-            document.querySelectorAll('[data-key]').forEach(el => {
-                const key = el.getAttribute('data-key');
-                if (translations['en']?.[key] !== undefined) el.innerHTML = translations['en'][key];
-            });
-
-            updateLabels();
+            
+            const savedLang = localStorage.getItem('blythello_lang') || 'en';
+            changeLanguage(savedLang);
 
             setTimeout(() => {
                 nav.style.opacity = '1';
-                if (!isMobile()) leftBanner.style.opacity = '1';
                 fetchImageList();
-                if (img.complete && img.naturalHeight > 0) syncBannerHeight();
             }, 2500);
         });
-
-        window.addEventListener('resize', syncBannerHeight);
-        img.addEventListener('load', syncBannerHeight);
     </script>
 </body>
 </html>
