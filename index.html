@@ -479,20 +479,6 @@
             } catch { return 0; }
         }
 
-        async function addLike(photo) {
-            try {
-                const rows = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=id,count`);
-                if (rows.length > 0) {
-                    const { id, count } = rows[0];
-                    await sbFetch(`likes?id=eq.${id}`, 'PATCH', { count: count + 1 });
-                    return count + 1;
-                } else {
-                    await sbFetch('likes', 'POST', { photo, count: 1 });
-                    return 1;
-                }
-            } catch (e) { console.error('Like error:', e); return null; }
-        }
-
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
@@ -548,15 +534,13 @@
         const progressFill   = document.getElementById('progress-fill');
         const announceText   = document.getElementById('announce-text');
 
-        // Функции для работы с лайками (оставлены для совместимости, но likeBtn не использует их)
-        function hasLiked(path) {
-            try { return JSON.parse(localStorage.getItem('blythello_likes') || '[]').includes(path); }
-            catch { return false; }
+        // Функция для генерации случайного числа от 0 до 7
+        function getRandomLikeCount() {
+            return Math.floor(Math.random() * 8); // 0-7 включительно
         }
 
-        function setCount(n) {
-            // Не меняем счетчик, всегда 0
-        }
+        // Устанавливаем случайное значение при загрузке
+        likeCountEl.textContent = getRandomLikeCount();
 
         async function getNewPhoto() {
             if (!imageList.length) return;
@@ -575,17 +559,19 @@
                     img.style.opacity = '1'; 
                 };
                 currentPath = path;
-                // Не обновляем likeBtn и счетчик
+                
+                // При смене фото генерируем новое случайное число для лайков
+                likeCountEl.textContent = getRandomLikeCount();
             }, 500);
         }
 
-        // Like ничего не делает
+        // Like ничего не делает, счетчик не меняется
         likeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             // Никакого действия
         });
 
-        // Next работает - переключает фото
+        // Next работает - переключает фото и обновляет случайный счетчик
         nextBtn.addEventListener('click', getNewPhoto);
 
         async function fetchImageList() {
