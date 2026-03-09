@@ -211,37 +211,6 @@
             justify-content: center;
         }
 
-        .gallery-likes-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            align-self: flex-start;
-            margin-bottom: 20px;
-            padding: 12px 28px;
-            border-radius: 100px;
-            background: linear-gradient(135deg, var(--rose), var(--mauve));
-            color: white;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 8px 24px rgba(212,132,154,0.3);
-            white-space: nowrap;
-            font-family: 'DM Sans', sans-serif;
-            letter-spacing: 0.3px;
-        }
-        .gallery-likes-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,132,154,0.4); }
-        .gallery-likes-btn .btn-icon { font-size: 1.1rem; animation: heartbeat 1.8s ease infinite; }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            15%       { transform: scale(1.25); }
-            30%       { transform: scale(1); }
-            45%       { transform: scale(1.15); }
-        }
-
         .announce-box {
             background: var(--white);
             border: 2px solid var(--blush);
@@ -349,17 +318,9 @@
             font-family: 'DM Sans', sans-serif;
         }
         .btn-like { background: var(--white); color: var(--rose); border: 2px solid var(--blush); }
-        .btn-like:hover:not(:disabled) { background: var(--blush); border-color: var(--rose); }
-        .btn-like:disabled { opacity: 0.5; cursor: default; background: var(--soft); }
+        .btn-like:hover { background: var(--blush); border-color: var(--rose); }
         .btn-next { background: var(--deep); color: var(--white); }
         .btn-next:hover { background: var(--mauve); transform: translateY(-1px); }
-
-        @keyframes likePopup {
-            0%   { transform: scale(1); }
-            50%  { transform: scale(1.4); color: var(--rose); }
-            100% { transform: scale(1); }
-        }
-        .like-pop { animation: likePopup 0.3s ease; }
 
         @media (max-width: 1024px) and (min-width: 769px) {
             .main-title { font-size: 1.6rem; }
@@ -385,7 +346,6 @@
             .promo-box  { padding: 18px; margin-bottom: 12px; }
             .loader-container { margin: 12px 0; border-radius: 40px; }
             .progress-steps { font-size: 0.65rem; }
-            .gallery-likes-btn { align-self: center; font-size: 0.85rem; padding: 10px 22px; }
             .announce-box { margin-bottom: 16px; padding: 16px; }
         }
 
@@ -397,7 +357,6 @@
             .lock-icon { font-size: 2.5rem; }
             .overlay-text { font-size: 0.9rem; padding: 4px 14px; }
             .lang-btn    { padding: 4px 10px; font-size: 0.7rem; }
-            .gallery-likes-btn { font-size: 0.8rem; padding: 8px 18px; }
         }
     </style>
 </head>
@@ -426,17 +385,12 @@
                     </div>
                     <div class="gallery-nav" id="gallery-controls">
                         <button id="like-btn" class="btn-gallery btn-like" data-key="like">❤️ Like</button>
-                        <div class="like-counter" id="like-counter">❤️ <span id="like-count">—</span></div>
+                        <div class="like-counter" id="like-counter">❤️ <span id="like-count">0</span></div>
                         <button id="next-btn" class="btn-gallery btn-next" data-key="next">Next ✨</button>
                     </div>
                 </div>
 
                 <div class="right-side">
-                    <a href="gl.html" class="gallery-likes-btn" id="gallery-likes-btn">
-                        <span class="btn-icon">❤️</span>
-                        <span id="gallery-btn-text">Liked Gallery</span>
-                    </a>
-
                     <div class="announce-box">
                         <span class="announce-icon">🎀</span>
                         <p class="announce-text" id="announce-text">
@@ -478,55 +432,14 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://gdsjluxymzqzkznvewfm.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdkc2psdXh5bXpxemt6bnZld2ZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2MzM4NTMsImV4cCI6MjA4NzIwOTg1M30.pFdLXrS0FxHNOyYFkSDCJCSiKun42NbcQTwagxyKUAE';
-
-        async function sbFetch(path, method = 'GET', body = null) {
-            const opts = {
-                method,
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_KEY,
-                    'Content-Type': 'application/json',
-                    'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=representation' : 'return=representation'
-                }
-            };
-            if (body) opts.body = JSON.stringify(body);
-            const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
-            if (!res.ok) throw new Error(await res.text());
-            return res.json();
-        }
-
-        async function getLikes(photo) {
-            try {
-                const data = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=count`);
-                return data[0]?.count ?? 0;
-            } catch { return 0; }
-        }
-
-        async function addLike(photo) {
-            try {
-                const rows = await sbFetch(`likes?photo=eq.${encodeURIComponent(photo)}&select=id,count`);
-                if (rows.length > 0) {
-                    const { id, count } = rows[0];
-                    await sbFetch(`likes?id=eq.${id}`, 'PATCH', { count: count + 1 });
-                    return count + 1;
-                } else {
-                    await sbFetch('likes', 'POST', { photo, count: 1 });
-                    return 1;
-                }
-            } catch (e) { console.error('Like error:', e); return null; }
-        }
-
         const translations = {
             en: {
                 title: "WE'RE ALMOST READY!",
                 subtitle: "The world of Blythe is coming soon.",
                 emailTitle: "Send your feedback and suggestions to:",
                 loading: "LAUNCHING SOON...",
-                like: "❤️ Like", liked: "❤️ Liked", next: "Next ✨",
+                like: "❤️ Like", next: "Next ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Content", step4: "○ Launch",
-                galleryBtn: "Liked Gallery",
                 announceText: 'If you want to participate in the Liked Gallery,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Subject: <span class="announce-subject">I want to participate</span><br>We will send you the instructions.',
             },
             de: {
@@ -534,9 +447,8 @@
                 subtitle: "Die Welt von Blythe kommt bald.",
                 emailTitle: "Senden Sie Ihr Feedback und Vorschläge an:",
                 loading: "STARTET BALD...",
-                like: "❤️ Like", liked: "❤️ Geliked", next: "Weiter ✨",
+                like: "❤️ Like", next: "Weiter ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Inhalt", step4: "○ Start",
-                galleryBtn: "Liked-Galerie",
                 announceText: 'Wenn Sie an der Liked-Galerie teilnehmen möchten,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Betreff: <span class="announce-subject">Ich möchte teilnehmen</span><br>Wir senden Ihnen die Anleitung.',
             },
             fr: {
@@ -544,9 +456,8 @@
                 subtitle: "Le monde de Blythe arrive bientôt.",
                 emailTitle: "Envoyez vos commentaires et suggestions à :",
                 loading: "LANCEMENT IMMINENT...",
-                like: "❤️ Like", liked: "❤️ Aimé", next: "Suivant ✨",
+                like: "❤️ Like", next: "Suivant ✨",
                 step1: "✓ Design", step2: "✓ Backend", step3: "⧖ Contenu", step4: "○ Lancer",
-                galleryBtn: "Galerie des favoris",
                 announceText: 'Pour participer à la Galerie des favoris,<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a><br>Objet : <span class="announce-subject">Je veux participer</span><br>Nous vous enverrons les instructions.',
             },
             ja: {
@@ -554,97 +465,36 @@
                 subtitle: "ブライスの世界が間もなく登場します。",
                 emailTitle: "フィードバックやご提案はこちらまで：",
                 loading: "近日公開...",
-                like: "❤️ いいね", liked: "❤️ 済み", next: "次へ ✨",
+                like: "❤️ いいね", next: "次へ ✨",
                 step1: "✓ デザイン", step2: "✓ バックエンド", step3: "⧖ コンテンツ", step4: "○ 公開",
-                galleryBtn: "いいねギャラリー",
                 announceText: 'ギャラリーに参加したい方は、<br><a href="mailto:blythello@blythello.com" class="announce-email">blythello@blythello.com</a> までメールをお送りください。<br>件名：<span class="announce-subject">参加希望</span><br>参加方法をご案内いたします。',
             }
         };
 
         let currentLang = 'en';
-        let imageList   = [];
-        let currentPath = '';
 
-        const img            = document.getElementById('main-photo');
         const nav            = document.getElementById('gallery-controls');
         const likeBtn        = document.getElementById('like-btn');
         const nextBtn        = document.getElementById('next-btn');
-        const likeCountEl    = document.getElementById('like-count');
         const progressFill   = document.getElementById('progress-fill');
-        const galleryBtnText = document.getElementById('gallery-btn-text');
         const announceText   = document.getElementById('announce-text');
 
-        function hasLiked(path) {
-            try { return JSON.parse(localStorage.getItem('blythello_likes') || '[]').includes(path); }
-            catch { return false; }
-        }
-
-        function markLiked(path) {
-            try {
-                const arr = JSON.parse(localStorage.getItem('blythello_likes') || '[]');
-                if (!arr.includes(path)) { arr.push(path); localStorage.setItem('blythello_likes', JSON.stringify(arr)); }
-            } catch {}
-        }
-
-        function setCount(n) {
-            likeCountEl.textContent = n === null ? '—' : n;
-        }
-
-        async function getNewPhoto() {
-            if (!imageList.length) return;
-            const randomName = imageList[Math.floor(Math.random() * imageList.length)];
-            const fileName   = randomName.toLowerCase().endsWith('.jpg') ? randomName : randomName + '.jpg';
-            const path       = 'FG/' + fileName;
-
-            img.style.opacity = '0';
-            setCount('…');
-
-            setTimeout(async () => {
-                img.src = path;
-                img.onload  = () => { 
-                    img.style.opacity = '1'; 
-                };
-                img.onerror = () => { 
-                    img.style.opacity = '1'; 
-                };
-                currentPath      = path;
-                likeBtn.disabled = hasLiked(path);
-                updateLabels();
-                const count = await getLikes(path);
-                setCount(count);
-            }, 500);
-        }
-
-        likeBtn.addEventListener('click', async () => {
-            if (!currentPath || likeBtn.disabled) return;
-            likeBtn.disabled = true;
-            markLiked(currentPath);
-            updateLabels();
-            likeCountEl.classList.remove('like-pop');
-            void likeCountEl.offsetWidth;
-            likeCountEl.classList.add('like-pop');
-            const newCount = await addLike(currentPath);
-            if (newCount !== null) setCount(newCount);
+        // Пустые обработчики - кнопки нажимаются, но ничего не делают
+        likeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Никакого действия
         });
 
-        async function fetchImageList() {
-            try {
-                const response = await fetch('FG/1.txt');
-                if (!response.ok) throw new Error('File not found');
-                const text = await response.text();
-                imageList = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-                if (imageList.length > 0) getNewPhoto();
-            } catch (err) {
-                console.warn('Could not load FG/1.txt:', err.message);
-            }
-        }
+        nextBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Никакого действия
+        });
 
         function updateLabels() {
             const t = translations[currentLang];
-            likeBtn.innerText          = likeBtn.disabled ? t.liked : t.like;
-            nextBtn.innerText          = t.next;
-            galleryBtnText.textContent = t.galleryBtn;
-            announceText.innerHTML     = t.announceText;
+            likeBtn.innerText = t.like;
+            nextBtn.innerText = t.next;
+            announceText.innerHTML = t.announceText;
         }
 
         function changeLanguage(lang) {
@@ -660,7 +510,6 @@
             updateLabels();
         }
 
-        nextBtn.addEventListener('click', getNewPhoto);
         document.querySelectorAll('.lang-btn').forEach(btn =>
             btn.addEventListener('click', () => changeLanguage(btn.dataset.lang))
         );
@@ -677,7 +526,6 @@
 
             setTimeout(() => {
                 nav.style.opacity = '1';
-                fetchImageList();
             }, 2500);
         });
     </script>
