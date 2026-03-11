@@ -545,7 +545,6 @@ let selectedFile = null;
 let selectedStyle = 'blythe';
 let startTime = null;
 let timerInterval = null;
-let pollInterval = null;
 
 // ---- Style select ----
 document.querySelectorAll('.style-card').forEach(card => {
@@ -584,9 +583,49 @@ fileInput.addEventListener('change', () => {
   if (fileInput.files[0]) setFile(fileInput.files[0]);
 });
 
-function setFile(file) {
-  if (!file.type.match(/image\/(jpeg|png)/)) { showError('Only JPEG or PNG images are supported.'); return; }
-  if (file.size > 10 * 1024 * 1024) { showError('File is too large. Maximum 10 MB.'); return; }
+// ---- Client-side validation ----
+function validateFileClient(file) {
+  const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
+  if (!allowed.includes(file.type)) {
+    return 'Только JPEG и PNG файлы. Выбранный формат не поддерживается.';
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    return 'Файл слишком большой. Максимум 10 МБ.';
+  }
+  if (file.size < 5 * 1024) {
+    return 'Файл слишком маленький. Загрузите нормальное фото.';
+  }
+  return null;
+}
+
+function validateImageSize(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      if (img.width < 100 || img.height < 100) {
+        resolve(`Изображение слишком маленькое (${img.width}x${img.height}px). Минимум 100x100px.`);
+      } else {
+        resolve(null);
+      }
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve('Не удалось прочитать изображение.'); };
+    img.src = url;
+  });
+}
+
+async function setFile(file) {
+  hideError();
+
+  // Быстрая проверка формата и размера файла
+  const quickError = validateFileClient(file);
+  if (quickError) { showError('⚠️ ' + quickError); return; }
+
+  // Проверка размеров изображения
+  const sizeError = await validateImageSize(file);
+  if (sizeError) { showError('⚠️ ' + sizeError); return; }
+
   selectedFile = file;
   const url = URL.createObjectURL(file);
   previewImg.src = url;
@@ -594,18 +633,17 @@ function setFile(file) {
   previewOverlay.classList.add('visible');
   uploadPlaceholder.style.display = 'none';
   uploadArea.classList.add('has-image');
-  hideError();
 }
 
 // ---- Generate ----
 btnGenerate.addEventListener('click', generate);
 
 async function generate() {
-  if (!selectedFile) { showError('Please upload a photo first.'); return; }
+  if (!selectedFile) { showError('⚠️ Сначала загрузите фото.'); return; }
 
   hideError();
   hideResult();
-  showStatus('⏳ Waking up server...', '');
+  showStatus('⏳ Подключаемся к серверу...', '');
   setProgress(5);
   btnGenerate.disabled = true;
   startTimer();
@@ -615,16 +653,16 @@ async function generate() {
     const h = await fetch(API_URL + '/health');
     const hd = await h.json();
     if (hd.status === 'loading') {
-      updateStatus('⏳ Model is loading, please wait...', 'This can take 10–20 min on first start');
+      updateStatus('⏳ Модель загружается, подождите...', 'Это может занять 10–20 мин при первом запуске');
       setProgress(10);
     }
   } catch(e) {
-    showError('❌ Server is unavailable. Please try again later.');
+    showError('❌ Сервер недоступен. Попробуйте позже.');
     resetUI();
     return;
   }
 
-  updateStatus('🎨 Generating your doll...', 'CPU generation: 5–15 minutes');
+  updateStatus('🎨 Генерируем вашу куклу...', 'CPU генерация: 5–15 минут');
   setProgress(15);
 
   const formData = new FormData();
@@ -642,20 +680,27 @@ async function generate() {
       showResult(blob);
     } else if (res.status === 202) {
       const data = await res.json();
-      updateStatus(`⏳ Queue position: ${data.position}`, 'Waiting for free slot...');
+      updateStatus(`⏳ В очереди (позиция: ${data.position})`, 'Ожидаем свободный слот...');
       setProgress(20);
       await pollQueue(data.task_id);
+    } else if (res.status === 429) {
+      const err = await res.json().catch(() => ({}));
+      showError('⏱️ ' + (err.detail || 'Слишком много запросов. Подождите немного.'));
+      resetUI();
     } else if (res.status === 503) {
-      updateStatus('⏳ Model still loading...', 'Please wait 1–2 minutes and try again');
-      setProgress(8);
-      setTimeout(resetUI, 3000);
+      showError('⏳ Модель ещё загружается. Подождите 1–2 минуты и попробуйте снова.');
+      resetUI();
+    } else if (res.status === 400) {
+      const err = await res.json().catch(() => ({}));
+      showError('⚠️ ' + (err.detail || 'Ошибка проверки фото.'));
+      resetUI();
     } else {
       const err = await res.json().catch(() => ({}));
-      showError('❌ ' + (err.detail || err.error || 'Unknown error'));
+      showError('❌ ' + (err.detail || err.error || 'Неизвестная ошибка'));
       resetUI();
     }
   } catch(e) {
-    showError('❌ Connection error: ' + e.message);
+    showError('❌ Ошибка соединения: ' + e.message);
     resetUI();
   }
 }
@@ -670,7 +715,7 @@ async function pollQueue(taskId) {
 
     const pct = Math.min(15 + Math.floor((elapsed / 600) * 75), 90);
     setProgress(pct);
-    updateStatus(`🎨 Generating... (${Math.floor(elapsed / 60)}m ${elapsed % 60}s)`, 'Almost there, hang tight!');
+    updateStatus(`🎨 Генерируем... (${Math.floor(elapsed / 60)}м ${elapsed % 60}с)`, 'Почти готово, подождите!');
 
     try {
       const res = await fetch(API_URL + '/queue/' + taskId);
@@ -682,14 +727,14 @@ async function pollQueue(taskId) {
         showResult(blob);
         return;
       } else if (data.status === 'failed') {
-        showError('❌ Generation failed: ' + (data.error || 'unknown'));
+        showError('❌ Ошибка генерации: ' + (data.error || 'неизвестно'));
         resetUI();
         return;
       }
-    } catch(e) { /* keep polling */ }
+    } catch(e) { /* продолжаем опрос */ }
   }
 
-  showError('⏰ Timeout. Please try again.');
+  showError('⏰ Превышено время ожидания. Попробуйте снова.');
   resetUI();
 }
 
@@ -727,32 +772,20 @@ function updateStatus(text, hint) {
   statusText.textContent = text;
   statusHint.textContent = hint || '';
 }
-function setProgress(pct) {
-  progressFill.style.width = pct + '%';
-}
-function showError(msg) {
-  errorBox.textContent = msg;
-  errorBox.classList.add('visible');
-}
+function setProgress(pct) { progressFill.style.width = pct + '%'; }
+function showError(msg) { errorBox.textContent = msg; errorBox.classList.add('visible'); }
 function hideError() { errorBox.classList.remove('visible'); }
 function hideResult() { resultBox.classList.remove('visible'); }
-function resetUI() {
-  stopTimer();
-  statusBox.classList.remove('visible');
-  btnGenerate.disabled = false;
-}
-
+function resetUI() { stopTimer(); statusBox.classList.remove('visible'); btnGenerate.disabled = false; }
 function startTimer() {
   startTime = Date.now();
   timerInterval = setInterval(() => {
     const s = Math.floor((Date.now() - startTime) / 1000);
     const m = Math.floor(s / 60);
-    statusTime.textContent = m > 0 ? `${m}m ${s % 60}s` : `${s}s`;
+    statusTime.textContent = m > 0 ? `${m}м ${s % 60}с` : `${s}с`;
   }, 1000);
 }
-function stopTimer() {
-  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
