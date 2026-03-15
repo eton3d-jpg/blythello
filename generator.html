@@ -1,1480 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blythello - Doll Generator</title>
-    <link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blythello - Doll Generator</title>
+<link rel="icon" href="https://img.icons8.com/color/48/000000/doll--v1.png" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#FDF6EE; --blush:#F2C4CE; --rose:#D4849A;
+  --deep:#2C1A22; --mauve:#7A4F5E; --soft:#F7EEF2;
+  --white:#FFFFFF; --shadow:rgba(44,26,34,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--deep);min-height:100vh;overflow-x:hidden;line-height:1.4}
+.wrapper{display:flex;max-width:1400px;width:100%;min-height:100vh;margin:0 auto;padding:24px;align-items:center;justify-content:center}
+.container{flex:0 1 1100px;background:rgba(255,255,255,.75);backdrop-filter:blur(20px);border-radius:40px;box-shadow:0 20px 60px var(--shadow);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--blush)}
 
-    <style>
-        :root {
-            --cream:  #FDF6EE;
-            --blush:  #F2C4CE;
-            --rose:   #D4849A;
-            --deep:   #2C1A22;
-            --mauve:  #7A4F5E;
-            --gold:   #C9A96E;
-            --soft:   #F7EEF2;
-            --white:  #FFFFFF;
-            --shadow: rgba(44,26,34,0.12);
-        }
+/* HEADER */
+.header{display:flex;justify-content:space-between;align-items:center;padding:20px 30px;border-bottom:1px solid var(--blush)}
+.logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--deep);text-decoration:none}
+.logo span{color:var(--rose);font-style:italic}
+.header-right{display:flex;gap:10px;align-items:center}
+.nav-link{background:var(--soft);border:1px solid var(--blush);border-radius:100px;padding:6px 16px;font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s;color:var(--mauve);font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.nav-link:hover{background:var(--blush);border-color:var(--rose);color:var(--deep)}
+.nav-link.active{background:var(--deep);color:var(--white);border-color:var(--deep)}
+.status-badge{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;border:1px solid var(--blush);background:var(--soft);font-size:.75rem;color:var(--mauve)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--blush);transition:all .3s}
+.sdot.on{background:#86efac;box-shadow:0 0 6px #86efac}
+.sdot.busy{background:var(--rose);box-shadow:0 0 6px var(--rose);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+/* LAYOUT */
+.content{display:flex;gap:40px;padding:30px;align-items:flex-start;flex:1}
+.left-side{flex:1;display:flex;flex-direction:column;align-items:center;gap:16px}
+.right-side{flex:1.5;display:flex;flex-direction:column;gap:18px}
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--cream);
-            color: var(--deep);
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.4;
-        }
+/* MODE TABS */
+.mode-tabs{display:flex;background:var(--soft);border-radius:100px;padding:4px;border:1px solid var(--blush)}
+.mode-tab{padding:9px 20px;border-radius:100px;border:none;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;color:var(--mauve);background:transparent;white-space:nowrap}
+.mode-tab.active{background:var(--white);color:var(--deep);box-shadow:0 2px 8px var(--shadow)}
 
-        .wrapper {
-            display: flex;
-            max-width: 1400px;
-            width: 100%;
-            min-height: 100vh;
-            margin: 0 auto;
-            padding: 24px;
-            align-items: center;
-            justify-content: center;
-        }
+/* UPLOAD */
+.upload-area{width:100%;aspect-ratio:1;max-height:50vh;border:2px dashed var(--blush);border-radius:30px;background:var(--soft);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.upload-area:hover,.upload-area.drag-over{border-color:var(--rose);background:rgba(242,196,206,.2)}
+.upload-area.has-image{border-style:solid}
+.upload-icon{font-size:3rem;margin-bottom:12px;opacity:.7}
+.upload-label{font-family:'Playfair Display',serif;font-size:1rem;color:var(--mauve);margin-bottom:6px}
+.upload-hint{font-size:.75rem;color:var(--rose);opacity:.8}
+#file-input{display:none}
+.prev-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:28px;display:none}
+.prev-img.vis{display:block}
+.prev-ov{position:absolute;bottom:12px;right:12px;background:rgba(44,26,34,.7);color:var(--white);border-radius:100px;padding:5px 14px;font-size:.72rem;font-weight:500;backdrop-filter:blur(4px);display:none;cursor:pointer;transition:background .2s}
+.prev-ov.vis{display:block}
+.prev-ov:hover{background:rgba(212,132,154,.9)}
 
-        .container {
-            flex: 0 1 1100px;
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(20px);
-            border-radius: 40px;
-            box-shadow: 0 20px 60px var(--shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid var(--blush);
-        }
+/* TXT ILLUSTRATION */
+.txt-illus{width:100%;aspect-ratio:1;max-height:50vh;border-radius:30px;background:linear-gradient(135deg,#fdf0f5,#f7e8f0);border:2px solid var(--blush);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--mauve)}
+.txt-illus-icon{font-size:5rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.txt-illus p{font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;opacity:.7}
 
-        /* HEADER */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--blush);
-        }
-        .logo { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--deep); text-decoration:none; }
-        .logo span { color:var(--rose); font-style:italic; }
-        .header-nav { display:flex; gap:10px; align-items:center; }
-        .nav-link {
-            background:var(--soft); border:1px solid var(--blush); border-radius:100px;
-            padding:6px 16px; font-size:.8rem; font-weight:500; cursor:pointer;
-            transition:all .2s; color:var(--mauve); font-family:'DM Sans',sans-serif;
-            text-decoration:none; display:inline-flex; align-items:center; gap:5px;
-        }
-        .nav-link:hover { background:var(--blush); border-color:var(--rose); color:var(--deep); }
-        .nav-link.active { background:var(--deep); color:var(--white); border-color:var(--deep); }
+/* TYPOGRAPHY */
+.page-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--deep);line-height:1.2}
+.page-sub{font-size:.95rem;color:var(--mauve);font-weight:300}
+.sec-lbl{font-size:.72rem;font-weight:600;color:var(--mauve);letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
 
-        /* STATUS BADGE */
-        .status-badge {
-            display:flex; align-items:center; gap:6px;
-            padding:5px 12px; border-radius:100px;
-            border:1px solid var(--blush); background:var(--soft);
-            font-size:.75rem; color:var(--mauve);
-        }
-        .status-dot { width:7px; height:7px; border-radius:50%; background:var(--blush); transition:all .3s; }
-        .status-dot.online { background:#86efac; box-shadow:0 0 6px #86efac; }
-        .status-dot.busy { background:var(--rose); box-shadow:0 0 6px var(--rose); animation:pulse 1s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+/* FORM ELEMENTS */
+textarea{width:100%;padding:11px 13px;background:var(--white);border:1.5px solid var(--blush);border-radius:16px;color:var(--deep);font-family:'DM Sans',sans-serif;font-size:.85rem;resize:vertical;min-height:68px;max-height:130px;outline:none;transition:border-color .2s;line-height:1.5}
+textarea:focus{border-color:var(--rose)}
+textarea::placeholder{color:var(--rose);opacity:.6}
+select{width:100%;padding:9px 12px;background:var(--white);border:1.5px solid var(--blush);border-radius:12px;color:var(--deep);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;cursor:pointer;transition:border-color .2s}
+select:focus{border-color:var(--rose)}
 
-        /* MODE TABS */
-        .mode-tabs {
-            display:flex; gap:0;
-            background:var(--soft); border-radius:100px;
-            padding:4px; border:1px solid var(--blush);
-        }
-        .mode-tab {
-            padding:8px 20px; border-radius:100px; border:none;
-            font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600;
-            cursor:pointer; transition:all .2s; color:var(--mauve); background:transparent;
-        }
-        .mode-tab.active { background:var(--white); color:var(--deep); box-shadow:0 2px 8px var(--shadow); }
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.chip{padding:3px 11px;border-radius:100px;font-size:.7rem;border:1px solid var(--blush);background:var(--white);color:var(--mauve);cursor:pointer;transition:all .15s;user-select:none}
+.chip:hover{background:var(--blush);border-color:var(--rose);color:var(--deep)}
 
-        /* CONTENT */
-        .content {
-            display:flex; gap:40px; padding:30px;
-            align-items:flex-start; flex:1;
-        }
+/* STYLE GRID */
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.style-card{background:var(--white);border:2px solid var(--blush);border-radius:18px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s}
+.style-card:hover{border-color:var(--rose);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow)}
+.style-card.sel{border-color:var(--rose);background:rgba(242,196,206,.15);box-shadow:0 4px 16px var(--shadow)}
+.style-emoji{font-size:1.8rem;display:block;margin-bottom:6px}
+.style-name{font-size:.8rem;font-weight:600;color:var(--deep)}
+.style-desc{font-size:.68rem;color:var(--mauve);margin-top:3px}
 
-        .left-side { flex:1; display:flex; flex-direction:column; align-items:center; gap:16px; }
-        .right-side { flex:1.5; display:flex; flex-direction:column; gap:18px; }
+/* PARAMS */
+.params-box{background:var(--white);border:1px solid var(--blush);border-radius:20px;padding:15px 17px}
+.p-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:11px}
+.p-row:last-child{margin-bottom:0}
+.p-lbl{font-size:.77rem;font-weight:500;color:var(--mauve);min-width:72px}
+.p-val{font-size:.77rem;font-weight:700;color:var(--rose);min-width:36px;text-align:right}
+input[type=range]{flex:1;appearance:none;height:4px;background:var(--blush);border-radius:100px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:16px;height:16px;border-radius:50%;background:var(--rose);border:2px solid var(--white);box-shadow:0 2px 6px var(--shadow);cursor:pointer;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.size-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.size-lbl{font-size:.72rem;color:var(--mauve);margin-bottom:4px}
 
-        /* UPLOAD AREA */
-        .upload-area {
-            width:100%; aspect-ratio:1; max-height:52vh;
-            border:2px dashed var(--blush); border-radius:30px;
-            background:var(--soft);
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            cursor:pointer; transition:all .3s;
-            position:relative; overflow:hidden;
-        }
-        .upload-area:hover,.upload-area.drag-over { border-color:var(--rose); background:rgba(242,196,206,.2); }
-        .upload-area.has-image { border-style:solid; }
-        .upload-icon { font-size:3rem; margin-bottom:12px; opacity:.7; }
-        .upload-label { font-family:'Playfair Display',serif; font-size:1rem; color:var(--mauve); margin-bottom:6px; }
-        .upload-hint { font-size:.75rem; color:var(--rose); opacity:.8; }
-        #file-input { display:none; }
-        .preview-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:28px; display:none; }
-        .preview-img.visible { display:block; }
-        .preview-overlay {
-            position:absolute; bottom:12px; right:12px;
-            background:rgba(44,26,34,.7); color:var(--white); border-radius:100px;
-            padding:5px 14px; font-size:.72rem; font-weight:500; backdrop-filter:blur(4px);
-            display:none; cursor:pointer; transition:background .2s;
-        }
-        .preview-overlay.visible { display:block; }
-        .preview-overlay:hover { background:rgba(212,132,154,.9); }
+/* BUTTON */
+.btn-gen{width:100%;padding:15px;border-radius:100px;border:none;background:var(--deep);color:var(--white);font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.5px;box-shadow:0 6px 20px var(--shadow)}
+.btn-gen:hover:not(:disabled){background:var(--mauve);transform:translateY(-2px);box-shadow:0 10px 30px var(--shadow)}
+.btn-gen:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-        /* TXT2IMG PANEL */
-        .txt-panel { display:none; flex-direction:column; gap:14px; width:100%; }
-        .txt-panel.active { display:flex; }
+/* STATUS */
+.status-box{background:var(--white);border:1px solid var(--blush);border-radius:20px;padding:15px 17px;display:none}
+.status-box.vis{display:block}
+.st-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.st-txt{font-size:.82rem;color:var(--mauve);font-weight:600}
+.st-time{font-size:.78rem;color:var(--rose);font-weight:700}
+.pbar{height:6px;background:var(--soft);border-radius:100px;overflow:hidden}
+.pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--blush),var(--rose),var(--mauve));border-radius:100px;transition:width .5s ease}
+.st-hint{font-size:.72rem;color:var(--mauve);margin-top:7px;opacity:.8}
 
-        .txt-illustration {
-            width:100%; aspect-ratio:1; max-height:52vh;
-            border-radius:30px; background:linear-gradient(135deg,#fdf0f5,#f7e8f0);
-            border:2px solid var(--blush);
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            gap:12px; color:var(--mauve);
-        }
-        .txt-illustration-icon { font-size:4rem; animation:float 3s ease-in-out infinite; }
-        @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
-        .txt-illustration p { font-family:'Playfair Display',serif; font-size:.95rem; font-style:italic; opacity:.7; }
+/* ERROR */
+.err-box{background:#fff0f3;border:1px solid #ffb3c1;border-radius:16px;padding:12px 16px;font-size:.82rem;color:#c0392b;display:none}
+.err-box.vis{display:block}
 
-        /* SECTION LABEL */
-        .section-label {
-            font-size:.75rem; font-weight:600; color:var(--mauve);
-            letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;
-        }
+/* RESULT */
+.res-box{display:none;flex-direction:column;gap:12px}
+.res-box.vis{display:flex}
+.res-wrap{position:relative;border-radius:24px;overflow:hidden;border:2px solid var(--blush);box-shadow:0 8px 30px var(--shadow)}
+.res-img{width:100%;display:block;border-radius:22px;animation:reveal .8s ease-out forwards}
+@keyframes reveal{from{opacity:0;filter:blur(8px);transform:scale(.97)}to{opacity:1;filter:blur(0);transform:scale(1)}}
+.res-actions{display:flex;gap:10px}
+.btn-act{flex:1;padding:10px;border-radius:100px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-dl{background:var(--deep);color:var(--white)}
+.btn-dl:hover{background:var(--mauve)}
+.btn-ag{background:var(--white);color:var(--rose);border:2px solid var(--blush)}
+.btn-ag:hover{background:var(--blush)}
 
-        /* STYLE GRID */
-        .style-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-        .style-card {
-            background:var(--white); border:2px solid var(--blush);
-            border-radius:18px; padding:14px 10px; text-align:center;
-            cursor:pointer; transition:all .2s;
-        }
-        .style-card:hover { border-color:var(--rose); transform:translateY(-2px); box-shadow:0 6px 20px var(--shadow); }
-        .style-card.selected { border-color:var(--rose); background:rgba(242,196,206,.15); box-shadow:0 4px 16px var(--shadow); }
-        .style-emoji { font-size:1.8rem; display:block; margin-bottom:6px; }
-        .style-name { font-size:.8rem; font-weight:600; color:var(--deep); }
-        .style-desc { font-size:.68rem; color:var(--mauve); margin-top:3px; }
+/* HISTORY */
+.hist-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.hist-img{width:52px;height:52px;border-radius:10px;object-fit:cover;border:2px solid transparent;cursor:pointer;opacity:.7;transition:all .2s}
+.hist-img:hover,.hist-img.act{border-color:var(--rose);opacity:1}
 
-        /* PROMPT FIELD */
-        .prompt-wrap { display:flex; flex-direction:column; gap:8px; }
-        textarea {
-            width:100%; padding:12px 14px;
-            background:var(--white); border:1.5px solid var(--blush);
-            border-radius:16px; color:var(--deep);
-            font-family:'DM Sans',sans-serif; font-size:.85rem;
-            resize:vertical; min-height:72px; max-height:140px;
-            outline:none; transition:border-color .2s; line-height:1.5;
-        }
-        textarea:focus { border-color:var(--rose); }
-        textarea::placeholder { color:var(--rose); opacity:.6; }
+/* HIDE/SHOW utility */
+.hidden{display:none!important}
 
-        /* PARAMS BOX */
-        .params-box {
-            background:var(--white); border:1px solid var(--blush);
-            border-radius:20px; padding:16px 18px;
-        }
-        .param-row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
-        .param-row:last-child { margin-bottom:0; }
-        .param-label { font-size:.78rem; font-weight:500; color:var(--mauve); min-width:70px; }
-        .param-value { font-size:.78rem; font-weight:700; color:var(--rose); min-width:32px; text-align:right; }
-        input[type=range] { flex:1; appearance:none; height:4px; background:var(--blush); border-radius:100px; outline:none; cursor:pointer; }
-        input[type=range]::-webkit-slider-thumb {
-            appearance:none; width:16px; height:16px; border-radius:50%;
-            background:var(--rose); border:2px solid var(--white);
-            box-shadow:0 2px 6px var(--shadow); cursor:pointer; transition:transform .15s;
-        }
-        input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
-
-        /* SIZE SELECT */
-        .size-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        select {
-            width:100%; padding:9px 12px;
-            background:var(--white); border:1.5px solid var(--blush);
-            border-radius:12px; color:var(--deep);
-            font-family:'DM Sans',sans-serif; font-size:.82rem;
-            outline:none; cursor:pointer; transition:border-color .2s;
-        }
-        select:focus { border-color:var(--rose); }
-
-        /* GENERATE BTN */
-        .btn-generate {
-            width:100%; padding:16px; border-radius:100px; border:none;
-            background:var(--deep); color:var(--white);
-            font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700;
-            cursor:pointer; transition:all .25s; letter-spacing:.5px;
-            box-shadow:0 6px 20px var(--shadow);
-        }
-        .btn-generate:hover:not(:disabled) { background:var(--mauve); transform:translateY(-2px); box-shadow:0 10px 30px var(--shadow); }
-        .btn-generate:disabled { opacity:.6; cursor:not-allowed; transform:none; }
-
-        /* STATUS */
-        .status-box { background:var(--white); border:1px solid var(--blush); border-radius:20px; padding:16px 18px; display:none; }
-        .status-box.visible { display:block; }
-        .status-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
-        .status-text { font-size:.82rem; color:var(--mauve); font-weight:600; }
-        .status-time { font-size:.78rem; color:var(--rose); font-weight:700; }
-        .progress-bar { height:6px; background:var(--soft); border-radius:100px; overflow:hidden; }
-        .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--blush),var(--rose),var(--mauve)); border-radius:100px; transition:width .5s ease; }
-        .status-hint { font-size:.72rem; color:var(--mauve); margin-top:8px; opacity:.8; }
-
-        /* ERROR */
-        .error-box { background:#fff0f3; border:1px solid #ffb3c1; border-radius:16px; padding:12px 16px; font-size:.82rem; color:#c0392b; display:none; }
-        .error-box.visible { display:block; }
-
-        /* RESULT */
-        .result-box { display:none; flex-direction:column; gap:12px; }
-        .result-box.visible { display:flex; }
-        .result-img-wrap { position:relative; border-radius:24px; overflow:hidden; border:2px solid var(--blush); box-shadow:0 8px 30px var(--shadow); }
-        .result-img { width:100%; display:block; border-radius:22px; animation:magicReveal .8s ease-out forwards; }
-        @keyframes magicReveal { from{opacity:0;filter:blur(8px);transform:scale(.97)} to{opacity:1;filter:blur(0);transform:scale(1)} }
-        .result-actions { display:flex; gap:10px; }
-        .btn-action { flex:1; padding:10px; border-radius:100px; border:none; font-size:.82rem; font-weight:600; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif; }
-        .btn-download { background:var(--deep); color:var(--white); }
-        .btn-download:hover { background:var(--mauve); }
-        .btn-again { background:var(--white); color:var(--rose); border:2px solid var(--blush); }
-        .btn-again:hover { background:var(--blush); }
-
-        /* PAGE TITLE */
-        .page-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--deep); line-height:1.2; }
-        .page-subtitle { font-size:.95rem; color:var(--mauve); font-weight:300; }
-
-        /* TAG CHIPS for quick prompts */
-        .chips { display:flex; flex-wrap:wrap; gap:6px; }
-        .chip {
-            padding:4px 12px; border-radius:100px; font-size:.72rem;
-            border:1px solid var(--blush); background:var(--white);
-            color:var(--mauve); cursor:pointer; transition:all .15s;
-        }
-        .chip:hover { background:var(--blush); border-color:var(--rose); color:var(--deep); }
-
-        /* HISTORY STRIP */
-        .history-strip { display:flex; gap:8px; flex-wrap:wrap; }
-        .hist-thumb {
-            width:54px; height:54px; border-radius:10px; object-fit:cover;
-            border:2px solid transparent; cursor:pointer; opacity:.7; transition:all .2s;
-        }
-        .hist-thumb:hover,.hist-thumb.active { border-color:var(--rose); opacity:1; }
-
-        @media(max-width:768px) {
-            .wrapper { padding:12px; }
-            .container { border-radius:30px; }
-            .header { padding:16px 20px; }
-            .content { flex-direction:column; gap:20px; padding:20px; }
-            .left-side { width:100%; }
-            .page-title { font-size:1.5rem; }
-            .style-grid { gap:8px; }
-            .style-card { padding:10px 6px; }
-            .style-emoji { font-size:1.4rem; }
-            .mode-tab { padding:7px 14px; font-size:.75rem; }
-        }
-    </style>
+@media(max-width:768px){
+  .wrapper{padding:12px}
+  .container{border-radius:30px}
+  .header{padding:14px 18px}
+  .content{flex-direction:column;gap:20px;padding:18px}
+  .left-side{width:100%}
+  .page-title{font-size:1.5rem}
+  .mode-tab{padding:7px 13px;font-size:.76rem}
+}
+</style>
 </head>
 <body>
-<div class="wrapper">
-  <div class="container">
+<div class="wrapper"><div class="container">
 
-    <!-- HEADER -->
-    <div class="header">
-      <a href="index.html" class="logo">Blythe<span>llo</span></a>
-      <div class="header-nav">
-        <a href="index.html" class="nav-link">← Home</a>
-        <a href="#" class="nav-link active">✨ Generator</a>
-        <div class="status-badge">
-          <div class="status-dot" id="statusDot"></div>
-          <span id="statusText">checking...</span>
+<!-- HEADER -->
+<header class="header">
+  <a href="index.html" class="logo">Blythe<span>llo</span></a>
+  <div class="header-right">
+    <a href="index.html" class="nav-link">← Home</a>
+    <a href="#" class="nav-link active">✨ Generator</a>
+    <div class="status-badge">
+      <div class="sdot" id="sdot"></div>
+      <span id="stxt">checking...</span>
+    </div>
+  </div>
+</header>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- LEFT -->
+  <div class="left-side">
+    <!-- txt2img: decorative illustration -->
+    <div class="txt-illus" id="leftTxt">
+      <div class="txt-illus-icon">🎀</div>
+      <p>Describe your doll</p>
+    </div>
+
+    <!-- img2img: upload area -->
+    <div id="leftImg" class="hidden" style="width:100%">
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="file-input" accept="image/jpeg,image/png">
+        <img class="prev-img" id="prevImg" alt="">
+        <div class="prev-ov" id="prevOv">🔄 Change photo</div>
+        <div id="uploadPH">
+          <div class="upload-icon">🖼</div>
+          <div class="upload-label">Drop your photo here</div>
+          <div class="upload-hint">JPEG or PNG · max 10 MB</div>
         </div>
       </div>
     </div>
 
-    <!-- CONTENT -->
-    <main class="content">
-
-      <!-- LEFT -->
-      <div class="left-side">
-
-        <!-- img2img upload (shown in img2img mode) -->
-        <div id="img2imgLeft" style="width:100%">
-          <div class="upload-area" id="upload-area">
-            <input type="file" id="file-input" accept="image/jpeg,image/png">
-            <img class="preview-img" id="preview-img" alt="preview">
-            <div class="preview-overlay" id="preview-overlay">🔄 Change photo</div>
-            <div id="upload-placeholder">
-              <div class="upload-icon">🎀</div>
-              <div class="upload-label">Drop your photo here</div>
-              <div class="upload-hint">JPEG or PNG · up to 10 MB</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- txt2img illustration (shown in txt2img mode) -->
-        <div id="txt2imgLeft" style="width:100%;display:none">
-          <div class="txt-illustration">
-            <div class="txt-illustration-icon">✨</div>
-            <p>Describe your doll</p>
-          </div>
-        </div>
-
-        <!-- history -->
-        <div id="historyWrap" style="display:none;width:100%">
-          <div class="section-label" style="margin-bottom:8px">Recent</div>
-          <div class="history-strip" id="historyStrip"></div>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <div class="right-side">
-        <div>
-          <h1 class="page-title">Create your Blythe</h1>
-          <p class="page-subtitle">Generate from text or transform a photo</p>
-        </div>
-
-        <!-- MODE TABS -->
-        <div class="mode-tabs">
-          <button class="mode-tab active" id="tabTxt" onclick="switchMode('txt2img')">✍️ Text → Doll</button>
-          <button class="mode-tab" id="tabImg" onclick="switchMode('img2img')">🖼 Photo → Doll</button>
-        </div>
-
-        <!-- TXT2IMG CONTROLS -->
-        <div id="ctrlTxt2img" style="display:flex;flex-direction:column;gap:14px">
-
-          <div class="prompt-wrap">
-            <div class="section-label">Prompt</div>
-            <textarea id="promptText" rows="3" placeholder="portrait, blue eyes, flower crown, soft light, masterpiece...">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
-            <div class="chips" id="promptChips">
-              <span class="chip" onclick="addChip('gothic style')">gothic style</span>
-              <span class="chip" onclick="addChip('flower crown')">flower crown</span>
-              <span class="chip" onclick="addChip('silver hair')">silver hair</span>
-              <span class="chip" onclick="addChip('black hair')">black hair</span>
-              <span class="chip" onclick="addChip('anime style')">anime style</span>
-              <span class="chip" onclick="addChip('full body')">full body</span>
-              <span class="chip" onclick="addChip('neon lights')">neon lights</span>
-              <span class="chip" onclick="addChip('watercolor style')">watercolor</span>
-            </div>
-          </div>
-
-          <div class="prompt-wrap">
-            <div class="section-label">Negative prompt</div>
-            <textarea id="negText" rows="2" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
-          </div>
-
-          <div>
-            <div class="section-label">Size</div>
-            <div class="size-grid">
-              <div>
-                <div style="font-size:.72rem;color:var(--mauve);margin-bottom:4px">Width</div>
-                <select id="txtWidth">
-                  <option value="512" selected>512 px</option>
-                  <option value="640">640 px</option>
-                  <option value="768">768 px</option>
-                </select>
-              </div>
-              <div>
-                <div style="font-size:.72rem;color:var(--mauve);margin-bottom:4px">Height</div>
-                <select id="txtHeight">
-                  <option value="512" selected>512 px</option>
-                  <option value="640">640 px</option>
-                  <option value="768">768 px — portrait</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- IMG2IMG CONTROLS -->
-        <div id="ctrlImg2img" style="display:none;flex-direction:column;gap:14px">
-
-          <div class="prompt-wrap">
-            <div class="section-label">Prompt</div>
-            <textarea id="promptImg" rows="3">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
-            <div class="chips">
-              <span class="chip" onclick="addChipImg('gothic style')">gothic style</span>
-              <span class="chip" onclick="addChipImg('flower crown')">flower crown</span>
-              <span class="chip" onclick="addChipImg('soft pastel')">soft pastel</span>
-              <span class="chip" onclick="addChipImg('full body')">full body</span>
-              <span class="chip" onclick="addChipImg('dark background')">dark bg</span>
-            </div>
-          </div>
-
-          <div class="prompt-wrap">
-            <div class="section-label">Negative prompt</div>
-            <textarea id="negImg" rows="2" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
-          </div>
-
-          <div>
-            <div class="section-label">Style</div>
-            <div class="style-grid">
-              <div class="style-card selected" data-style="blythe">
-                <span class="style-emoji">🎀</span>
-                <div class="style-name">Blythe</div>
-                <div class="style-desc">Big glossy eyes</div>
-              </div>
-              <div class="style-card" data-style="anime">
-                <span class="style-emoji">🌸</span>
-                <div class="style-name">Anime</div>
-                <div class="style-desc">Chibi kawaii</div>
-              </div>
-              <div class="style-card" data-style="watercolor">
-                <span class="style-emoji">🎨</span>
-                <div class="style-name">Watercolor</div>
-                <div class="style-desc">Soft painting</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- SHARED PARAMS -->
-        <div>
-          <div class="section-label">Fine-tune</div>
-          <div class="params-box">
-            <div class="param-row" id="strengthRow" style="display:none">
-              <span class="param-label">Strength</span>
-              <input type="range" id="strength" min="10" max="100" value="65"
-                oninput="document.getElementById('strength-val').textContent=(this.value/100).toFixed(2)">
-              <span class="param-value" id="strength-val">0.65</span>
-            </div>
-            <div class="param-row">
-              <span class="param-label">Steps</span>
-              <input type="range" id="steps" min="10" max="50" value="30"
-                oninput="document.getElementById('steps-val').textContent=this.value">
-              <span class="param-value" id="steps-val">30</span>
-            </div>
-            <div class="param-row">
-              <span class="param-label">Guidance</span>
-              <input type="range" id="guidance" min="10" max="150" value="75"
-                oninput="document.getElementById('guidance-val').textContent=(this.value/10).toFixed(1)">
-              <span class="param-value" id="guidance-val">7.5</span>
-            </div>
-            <div class="param-row">
-              <span class="param-label">Seed</span>
-              <input type="range" id="seed" min="-1" max="9999" value="-1"
-                oninput="document.getElementById('seed-val').textContent=this.value=='-1'?'random':this.value">
-              <span class="param-value" id="seed-val">random</span>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn-generate" id="btn-generate">✨ Generate Doll</button>
-
-        <div class="status-box" id="status-box">
-          <div class="status-header">
-            <span class="status-text" id="status-text">Connecting...</span>
-            <span class="status-time" id="status-time"></span>
-          </div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-          <div class="status-hint" id="status-hint"></div>
-        </div>
-
-        <div class="error-box" id="error-box"></div>
-
-        <div class="result-box" id="result-box">
-          <div class="result-img-wrap">
-            <img class="result-img" id="result-img" alt="Your Blythe doll">
-          </div>
-          <div class="result-actions">
-            <button class="btn-action btn-download" id="btn-download">⬇️ Download</button>
-            <button class="btn-action btn-again" id="btn-again">🔄 Try again</button>
-          </div>
-        </div>
-
-      </div>
-    </main>
+    <!-- history strip -->
+    <div id="histWrap" class="hidden" style="width:100%">
+      <div class="sec-lbl">Recent</div>
+      <div class="hist-strip" id="histStrip"></div>
+    </div>
   </div>
-</div>
+
+  <!-- RIGHT -->
+  <div class="right-side">
+    <div>
+      <h1 class="page-title">Create your Blythe</h1>
+      <p class="page-sub">Generate from text or transform a photo into a doll</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" id="tabTxt" onclick="setMode('txt')">✍️ Text → Doll</button>
+      <button class="mode-tab"        id="tabImg" onclick="setMode('img')">🖼 Photo → Doll</button>
+    </div>
+
+    <!-- TXT2IMG SECTION -->
+    <div id="secTxt">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div class="sec-lbl">Prompt</div>
+          <textarea id="txtPrompt" placeholder="portrait, blue eyes, flower crown, soft light, masterpiece...">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
+          <div class="chips">
+            <span class="chip" onclick="chip('txtPrompt','gothic style')">gothic style</span>
+            <span class="chip" onclick="chip('txtPrompt','flower crown')">flower crown</span>
+            <span class="chip" onclick="chip('txtPrompt','silver hair')">silver hair</span>
+            <span class="chip" onclick="chip('txtPrompt','black hair')">black hair</span>
+            <span class="chip" onclick="chip('txtPrompt','full body')">full body</span>
+            <span class="chip" onclick="chip('txtPrompt','anime style')">anime style</span>
+            <span class="chip" onclick="chip('txtPrompt','watercolor')">watercolor</span>
+            <span class="chip" onclick="chip('txtPrompt','neon lights')">neon lights</span>
+            <span class="chip" onclick="chip('txtPrompt','cyberpunk')">cyberpunk</span>
+          </div>
+        </div>
+        <div>
+          <div class="sec-lbl">Negative prompt</div>
+          <textarea id="txtNeg" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
+        </div>
+        <div>
+          <div class="sec-lbl">Size</div>
+          <div class="size-row">
+            <div><div class="size-lbl">Width</div>
+              <select id="txtW"><option value="512" selected>512 px</option><option value="640">640 px</option><option value="768">768 px</option></select>
+            </div>
+            <div><div class="size-lbl">Height</div>
+              <select id="txtH"><option value="512" selected>512 px</option><option value="640">640 px</option><option value="768">768 px — portrait</option></select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMG2IMG SECTION -->
+    <div id="secImg" class="hidden">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div class="sec-lbl">Prompt</div>
+          <textarea id="imgPrompt">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
+          <div class="chips">
+            <span class="chip" onclick="chip('imgPrompt','gothic style')">gothic style</span>
+            <span class="chip" onclick="chip('imgPrompt','flower crown')">flower crown</span>
+            <span class="chip" onclick="chip('imgPrompt','soft pastel')">soft pastel</span>
+            <span class="chip" onclick="chip('imgPrompt','full body')">full body</span>
+            <span class="chip" onclick="chip('imgPrompt','dark background')">dark bg</span>
+            <span class="chip" onclick="chip('imgPrompt','watercolor')">watercolor</span>
+          </div>
+        </div>
+        <div>
+          <div class="sec-lbl">Negative prompt</div>
+          <textarea id="imgNeg" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
+        </div>
+        <div>
+          <div class="sec-lbl">Style</div>
+          <div class="style-grid">
+            <div class="style-card sel" data-s="blythe"><span class="style-emoji">🎀</span><div class="style-name">Blythe</div><div class="style-desc">Big glossy eyes</div></div>
+            <div class="style-card" data-s="anime"><span class="style-emoji">🌸</span><div class="style-name">Anime</div><div class="style-desc">Chibi kawaii</div></div>
+            <div class="style-card" data-s="watercolor"><span class="style-emoji">🎨</span><div class="style-name">Watercolor</div><div class="style-desc">Soft painting</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHARED PARAMS -->
+    <div>
+      <div class="sec-lbl">Fine-tune</div>
+      <div class="params-box">
+        <div class="p-row" id="strengthRow" style="display:none">
+          <span class="p-lbl">Strength</span>
+          <input type="range" id="strength" min="10" max="100" value="65" oninput="pval('sv',(this.value/100).toFixed(2))">
+          <span class="p-val" id="sv">0.65</span>
+        </div>
+        <div class="p-row">
+          <span class="p-lbl">Steps</span>
+          <input type="range" id="steps" min="10" max="50" value="30" oninput="pval('stv',this.value)">
+          <span class="p-val" id="stv">30</span>
+        </div>
+        <div class="p-row">
+          <span class="p-lbl">Guidance</span>
+          <input type="range" id="guidance" min="10" max="150" value="75" oninput="pval('gv',(this.value/10).toFixed(1))">
+          <span class="p-val" id="gv">7.5</span>
+        </div>
+        <div class="p-row">
+          <span class="p-lbl">Seed</span>
+          <input type="range" id="seed" min="-1" max="9999" value="-1" oninput="pval('seedv',this.value=='-1'?'random':this.value)">
+          <span class="p-val" id="seedv">random</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-gen" id="btnGen" onclick="generate()">✨ Generate Doll</button>
+
+    <div class="status-box" id="statusBox">
+      <div class="st-head">
+        <span class="st-txt" id="stMsg">Connecting...</span>
+        <span class="st-time" id="stTime"></span>
+      </div>
+      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+      <div class="st-hint" id="stHint"></div>
+    </div>
+
+    <div class="err-box" id="errBox"></div>
+
+    <div class="res-box" id="resBox">
+      <div class="res-wrap"><img class="res-img" id="resImg" alt="Your Blythe doll"></div>
+      <div class="res-actions">
+        <button class="btn-act btn-dl" id="btnDl">⬇️ Download</button>
+        <button class="btn-act btn-ag" onclick="resetResult()">🔄 Try again</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div></div>
 
 <script>
-// ── API ───────────────────────────────────────────────────────────────────────
-const TXT2IMG_URL = "https://eton3d--picolab-generate.modal.run";
-const IMG2IMG_URL = "https://eton3d--picolab-img2img.modal.run";
-const HEALTH_URL  = "https://eton3d--picolab-health.modal.run";
+const TXT_URL    = "https://eton3d--picolab-generate.modal.run";
+const IMG_URL    = "https://eton3d--picolab-img2img.modal.run";
+const HEALTH_URL = "https://eton3d--picolab-health.modal.run";
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let currentMode   = 'txt2img';
-let selectedFile  = null;
-let selectedStyle = 'blythe';
-let timerInterval = null;
-let startTime     = null;
-const history     = [];
+const STYLE_PREFIX = { blythe:'', anime:'anime style, chibi, kawaii, ', watercolor:'watercolor style, soft painting, ' };
 
-// ── STYLE PROMPTS ─────────────────────────────────────────────────────────────
-const stylePrompts = {
-  blythe:     '',
-  anime:      'anime style, chibi, kawaii, ',
-  watercolor: 'watercolor style, soft painting, artistic, ',
-};
+let mode = 'txt';
+let uploadedB64 = null;
+let selStyle = 'blythe';
+let history = [];
+let timer = null;
 
-// ── REFS ──────────────────────────────────────────────────────────────────────
-const uploadArea     = document.getElementById('upload-area');
-const fileInput      = document.getElementById('file-input');
-const previewImg     = document.getElementById('preview-img');
-const previewOverlay = document.getElementById('preview-overlay');
-const uploadPH       = document.getElementById('upload-placeholder');
-const btnGenerate    = document.getElementById('btn-generate');
-const statusBox      = document.getElementById('status-box');
-const statusText     = document.getElementById('status-text');
-const statusTime     = document.getElementById('status-time');
-const statusHint     = document.getElementById('status-hint');
-const progressFill   = document.getElementById('progress-fill');
-const errorBox       = document.getElementById('error-box');
-const resultBox      = document.getElementById('result-box');
-const resultImg      = document.getElementById('result-img');
-
-// ── HEALTH CHECK ─────────────────────────────────────────────────────────────
-async function checkHealth() {
+// ── HEALTH ────────────────────────────────────────────────────────────────────
+(async () => {
   try {
-    const r = await fetch(HEALTH_URL, { method: 'GET' });
-    if (r.ok) {
-      document.getElementById('statusDot').className = 'status-dot online';
-      document.getElementById('statusText').textContent = 'online';
-    } else throw new Error();
-  } catch {
-    document.getElementById('statusDot').className = 'status-dot';
-    document.getElementById('statusText').textContent = 'offline';
-  }
-}
+    const r = await fetch(HEALTH_URL);
+    if (r.ok) { dot('on'); txt('online'); } else throw 0;
+  } catch { dot(''); txt('offline'); }
+})();
+
+function dot(c){ document.getElementById('sdot').className='sdot '+c; }
+function txt(t){ document.getElementById('stxt').textContent=t; }
 
 // ── MODE SWITCH ───────────────────────────────────────────────────────────────
-function switchMode(mode) {
-  currentMode = mode;
-  document.getElementById('tabTxt').classList.toggle('active', mode === 'txt2img');
-  document.getElementById('tabImg').classList.toggle('active', mode === 'img2img');
-  document.getElementById('ctrlTxt2img').style.display = mode === 'txt2img' ? 'flex' : 'none';
-  document.getElementById('ctrlImg2img').style.display = mode === 'img2img' ? 'flex' : 'none';
-  document.getElementById('img2imgLeft').style.display = mode === 'img2img' ? 'block' : 'none';
-  document.getElementById('txt2imgLeft').style.display = mode === 'txt2img' ? 'block' : 'none';
-  document.getElementById('strengthRow').style.display = mode === 'img2img' ? 'flex' : 'none';
-  hideError(); hideResult();
+function setMode(m) {
+  mode = m;
+  document.getElementById('tabTxt').classList.toggle('active', m==='txt');
+  document.getElementById('tabImg').classList.toggle('active', m==='img');
+  toggle('secTxt', m==='txt');
+  toggle('secImg', m==='img');
+  toggle('leftTxt', m==='txt');
+  toggle('leftImg', m==='img');
+  document.getElementById('strengthRow').style.display = m==='img' ? 'flex' : 'none';
+  hideErr(); hideRes();
 }
 
-// ── STYLE SELECT ─────────────────────────────────────────────────────────────
-document.querySelectorAll('.style-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedStyle = card.dataset.style;
+function toggle(id, show) {
+  const el = document.getElementById(id);
+  if (show) el.classList.remove('hidden'); else el.classList.add('hidden');
+}
+
+// ── STYLE CARDS ───────────────────────────────────────────────────────────────
+document.querySelectorAll('.style-card').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.style-card').forEach(x => x.classList.remove('sel'));
+    c.classList.add('sel');
+    selStyle = c.dataset.s;
   });
 });
 
 // ── UPLOAD ────────────────────────────────────────────────────────────────────
-uploadArea.addEventListener('click', () => fileInput.click());
-previewOverlay.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('drag-over'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+const ua = document.getElementById('uploadArea');
+const fi = document.getElementById('file-input');
+ua.addEventListener('click', () => fi.click());
+document.getElementById('prevOv').addEventListener('click', e => { e.stopPropagation(); fi.click(); });
+ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('drag-over'); });
+ua.addEventListener('dragleave', () => ua.classList.remove('drag-over'));
+ua.addEventListener('drop', e => { e.preventDefault(); ua.classList.remove('drag-over'); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+fi.addEventListener('change', () => { if (fi.files[0]) loadFile(fi.files[0]); });
 
-async function setFile(file) {
-  hideError();
-  if (!['image/jpeg','image/jpg','image/png'].includes(file.type)) { showError('⚠️ Only JPEG and PNG supported.'); return; }
-  if (file.size > 10 * 1024 * 1024) { showError('⚠️ File too large. Max 10 MB.'); return; }
-  selectedFile = file;
-  const url = URL.createObjectURL(file);
-  previewImg.src = url;
-  previewImg.classList.add('visible');
-  previewOverlay.classList.add('visible');
-  uploadPH.style.display = 'none';
-  uploadArea.classList.add('has-image');
+function loadFile(file) {
+  hideErr();
+  if (!['image/jpeg','image/jpg','image/png'].includes(file.type)) { showErr('Only JPEG and PNG supported.'); return; }
+  if (file.size > 10*1024*1024) { showErr('File too large. Max 10 MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    uploadedB64 = ev.target.result.split(',')[1];
+    const img = document.getElementById('prevImg');
+    img.src = ev.target.result;
+    img.classList.add('vis');
+    document.getElementById('prevOv').classList.add('vis');
+    document.getElementById('uploadPH').style.display = 'none';
+    ua.classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
 }
 
 // ── CHIPS ─────────────────────────────────────────────────────────────────────
-function addChip(tag) {
-  const ta = document.getElementById('promptText');
-  ta.value = ta.value.trimEnd() + (ta.value.endsWith(',') ? ' ' : ', ') + tag;
+function chip(id, tag) {
+  const ta = document.getElementById(id);
+  const v = ta.value.trimEnd();
+  ta.value = v + (v.endsWith(',') ? ' ' : ', ') + tag;
 }
-function addChipImg(tag) {
-  const ta = document.getElementById('promptImg');
-  ta.value = ta.value.trimEnd() + (ta.value.endsWith(',') ? ' ' : ', ') + tag;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function pval(id, v) { document.getElementById(id).textContent = v; }
+function pfill(pct) { document.getElementById('pfill').style.width = pct + '%'; }
+function showStatus(msg, hint) { document.getElementById('statusBox').classList.add('vis'); document.getElementById('stMsg').textContent = msg; document.getElementById('stHint').textContent = hint||''; }
+function updStatus(msg, hint) { document.getElementById('stMsg').textContent = msg; if (hint !== undefined) document.getElementById('stHint').textContent = hint; }
+function showErr(msg) { const e = document.getElementById('errBox'); e.textContent = '⚠️ ' + msg; e.classList.add('vis'); }
+function hideErr() { document.getElementById('errBox').classList.remove('vis'); }
+function hideRes() { document.getElementById('resBox').classList.remove('vis'); }
+function resetResult() { hideRes(); hideErr(); document.getElementById('btnGen').disabled = false; }
+
+function startTimer() {
+  const start = Date.now();
+  timer = setInterval(() => {
+    const s = Math.floor((Date.now()-start)/1000);
+    document.getElementById('stTime').textContent = s < 60 ? s+'s' : Math.floor(s/60)+'m '+(s%60)+'s';
+  }, 1000);
 }
+function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
 
 // ── GENERATE ─────────────────────────────────────────────────────────────────
-btnGenerate.addEventListener('click', generate);
-
 async function generate() {
-  hideError(); hideResult();
+  hideErr(); hideRes();
+  if (mode === 'img' && !uploadedB64) { showErr('Please upload a photo first.'); return; }
+
   const steps    = parseInt(document.getElementById('steps').value);
   const guidance = parseFloat(document.getElementById('guidance').value) / 10;
   const seed     = parseInt(document.getElementById('seed').value);
 
-  if (currentMode === 'img2img' && !selectedFile) { showError('⚠️ Please upload a photo first.'); return; }
-
-  showStatus('✨ Sending request...', '');
-  setProgress(10);
-  btnGenerate.disabled = true;
+  document.getElementById('btnGen').disabled = true;
+  dot('busy'); txt('generating...');
+  showStatus('✨ Sending request...', 'First request may take 3–5 min (cold start)');
+  pfill(10);
   startTimer();
 
-  document.getElementById('statusDot').className = 'status-dot busy';
-  document.getElementById('statusText').textContent = 'generating...';
-
   try {
-    let url, bodyObj;
+    let url, body;
 
-    if (currentMode === 'txt2img') {
-      const stylePrefix = stylePrompts[selectedStyle] || '';
-      url = TXT2IMG_URL;
-      bodyObj = {
-        prompt:          stylePrefix + document.getElementById('promptText').value,
-        negative_prompt: document.getElementById('negText').value,
+    if (mode === 'txt') {
+      url = TXT_URL;
+      body = {
+        prompt:          document.getElementById('txtPrompt').value,
+        negative_prompt: document.getElementById('txtNeg').value,
         steps, guidance, seed,
-        width:  parseInt(document.getElementById('txtWidth').value),
-        height: parseInt(document.getElementById('txtHeight').value),
+        width:  parseInt(document.getElementById('txtW').value),
+        height: parseInt(document.getElementById('txtH').value),
       };
-      updateStatus('🎨 Generating from text...', 'First request may take 3–5 min (cold start)');
+      updStatus('🎨 Generating from text...');
     } else {
-      // read file as base64
-      const b64 = await fileToBase64(selectedFile);
-      const stylePrefix = stylePrompts[selectedStyle] || '';
-      url = IMG2IMG_URL;
-      bodyObj = {
-        image:           b64,
-        prompt:          stylePrefix + document.getElementById('promptImg').value,
-        negative_prompt: document.getElementById('negImg').value,
+      const prefix = STYLE_PREFIX[selStyle] || '';
+      url = IMG_URL;
+      body = {
+        image:           uploadedB64,
+        prompt:          prefix + document.getElementById('imgPrompt').value,
+        negative_prompt: document.getElementById('imgNeg').value,
         strength:        parseFloat(document.getElementById('strength').value) / 100,
         steps, guidance, seed,
       };
-      updateStatus('🎨 Transforming your photo...', 'First request may take 3–5 min (cold start)');
+      updStatus('🎨 Transforming your photo...');
     }
 
-    setProgress(25);
+    pfill(25);
 
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyObj),
+      body: JSON.stringify(body),
       signal: AbortSignal.timeout(660000),
     });
 
-    setProgress(85);
+    pfill(85);
 
-    if (!r.ok) {
-      const txt = await r.text();
-      throw new Error('HTTP ' + r.status + ': ' + txt.slice(0, 200));
-    }
+    if (!r.ok) { throw new Error('HTTP ' + r.status + ': ' + (await r.text()).slice(0,200)); }
 
     const data = await r.json();
     if (!data.image) throw new Error('No image in response');
 
-    setProgress(100);
-    showResultImage(data.image, data.prompt);
+    pfill(100);
+    showResult(data.image, data.prompt);
 
   } catch(e) {
-    showError('❌ ' + e.message);
-    document.getElementById('statusDot').className = 'status-dot online';
-    document.getElementById('statusText').textContent = 'online';
+    showErr(e.message);
+    dot('on'); txt('online');
   } finally {
     stopTimer();
-    statusBox.classList.remove('visible');
-    btnGenerate.disabled = false;
+    document.getElementById('statusBox').classList.remove('vis');
+    document.getElementById('btnGen').disabled = false;
   }
 }
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result.split(',')[1]);
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-}
-
-// ── RESULT ────────────────────────────────────────────────────────────────────
-function showResultImage(b64, prompt) {
+function showResult(b64, prompt) {
   const src = 'data:image/png;base64,' + b64;
-  resultImg.src = src;
-  resultBox.classList.add('visible');
-
-  document.getElementById('btn-download').onclick = () => {
+  document.getElementById('resImg').src = src;
+  document.getElementById('resBox').classList.add('vis');
+  document.getElementById('btnDl').onclick = () => {
     const a = document.createElement('a');
-    a.href = src;
-    a.download = 'blythello_' + Date.now() + '.png';
-    a.click();
+    a.href = src; a.download = 'blythello_' + Date.now() + '.png'; a.click();
   };
-
-  // add to history
+  dot('on'); txt('online');
   history.unshift({ src, prompt });
   renderHistory();
-
-  document.getElementById('statusDot').className = 'status-dot online';
-  document.getElementById('statusText').textContent = 'online';
 }
 
 function renderHistory() {
-  if (history.length === 0) return;
-  document.getElementById('historyWrap').style.display = 'block';
-  document.getElementById('historyStrip').innerHTML = history.slice(0, 10).map((h, i) =>
-    `<img class="hist-thumb ${i===0?'active':''}" src="${h.src}" title="${h.prompt||''}" onclick="viewHistory(${i})">`
+  if (!history.length) return;
+  document.getElementById('histWrap').classList.remove('hidden');
+  document.getElementById('histStrip').innerHTML = history.slice(0,10).map((h,i) =>
+    `<img class="hist-img ${i===0?'act':''}" src="${h.src}" title="${(h.prompt||'').slice(0,60)}" onclick="pickHist(${i})">`
   ).join('');
 }
 
-function viewHistory(i) {
-  resultImg.src = history[i].src;
-  resultBox.classList.add('visible');
-  document.querySelectorAll('.hist-thumb').forEach((t,j) => t.classList.toggle('active', j===i));
+function pickHist(i) {
+  document.getElementById('resImg').src = history[i].src;
+  document.getElementById('resBox').classList.add('vis');
+  document.querySelectorAll('.hist-img').forEach((t,j) => t.classList.toggle('act', j===i));
 }
-
-document.getElementById('btn-again').addEventListener('click', () => { hideResult(); hideError(); btnGenerate.disabled = false; });
-
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function showStatus(text, hint) { statusBox.classList.add('visible'); statusText.textContent = text; statusHint.textContent = hint || ''; }
-function updateStatus(text, hint) { statusText.textContent = text; if (hint !== undefined) statusHint.textContent = hint; }
-function setProgress(pct) { progressFill.style.width = pct + '%'; }
-function showError(msg) { errorBox.textContent = msg; errorBox.classList.add('visible'); }
-function hideError() { errorBox.classList.remove('visible'); }
-function hideResult() { resultBox.classList.remove('visible'); }
-function startTimer() {
-  startTime = Date.now();
-  timerInterval = setInterval(() => {
-    const s = Math.floor((Date.now() - startTime) / 1000);
-    statusTime.textContent = s < 60 ? s + 's' : Math.floor(s/60) + 'm ' + (s%60) + 's';
-  }, 1000);
-}
-function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-checkHealth();
-</script>
-</body>
-</html>
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--blush);
-        }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--deep);
-            text-decoration: none;
-        }
-        .logo span { color: var(--rose); font-style: italic; }
-
-        .header-nav { display: flex; gap: 10px; align-items: center; }
-        .nav-link {
-            background: var(--soft);
-            border: 1px solid var(--blush);
-            border-radius: 100px;
-            padding: 6px 16px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: var(--mauve);
-            font-family: 'DM Sans', sans-serif;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .nav-link:hover { background: var(--blush); border-color: var(--rose); color: var(--deep); }
-        .nav-link.active { background: var(--deep); color: var(--white); border-color: var(--deep); }
-
-        /* CONTENT */
-        .content {
-            display: flex;
-            gap: 40px;
-            padding: 30px;
-            align-items: flex-start;
-            flex: 1;
-        }
-
-        /* LEFT — upload + preview */
-        .left-side {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .upload-area {
-            width: 100%;
-            aspect-ratio: 1;
-            max-height: 52vh;
-            border: 2px dashed var(--blush);
-            border-radius: 30px;
-            background: var(--soft);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .upload-area:hover, .upload-area.drag-over {
-            border-color: var(--rose);
-            background: rgba(242,196,206,0.2);
-        }
-        .upload-area.has-image { border-style: solid; }
-
-        .upload-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.7; }
-        .upload-label {
-            font-family: 'Playfair Display', serif;
-            font-size: 1rem;
-            color: var(--mauve);
-            margin-bottom: 6px;
-        }
-        .upload-hint { font-size: 0.75rem; color: var(--rose); opacity: 0.8; }
-
-        #file-input { display: none; }
-
-        .preview-img {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 28px;
-            display: none;
-        }
-        .preview-img.visible { display: block; }
-
-        .preview-overlay {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            background: rgba(44,26,34,0.7);
-            color: var(--white);
-            border-radius: 100px;
-            padding: 5px 14px;
-            font-size: 0.72rem;
-            font-weight: 500;
-            backdrop-filter: blur(4px);
-            display: none;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .preview-overlay.visible { display: block; }
-        .preview-overlay:hover { background: rgba(212,132,154,0.9); }
-
-        /* RIGHT — controls */
-        .right-side {
-            flex: 1.5;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .page-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--deep);
-            line-height: 1.2;
-        }
-        .page-subtitle { font-size: 0.95rem; color: var(--mauve); font-weight: 300; }
-
-        /* Style selector */
-        .section-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--mauve);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .style-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .style-card {
-            background: var(--white);
-            border: 2px solid var(--blush);
-            border-radius: 18px;
-            padding: 14px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .style-card:hover { border-color: var(--rose); transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
-        .style-card.selected { border-color: var(--rose); background: rgba(242,196,206,0.15); box-shadow: 0 4px 16px var(--shadow); }
-        .style-emoji { font-size: 1.8rem; display: block; margin-bottom: 6px; }
-        .style-name { font-size: 0.8rem; font-weight: 600; color: var(--deep); }
-        .style-desc { font-size: 0.68rem; color: var(--mauve); margin-top: 3px; }
-
-        /* Params */
-        .params-box {
-            background: var(--white);
-            border: 1px solid var(--blush);
-            border-radius: 20px;
-            padding: 16px 18px;
-        }
-        .param-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        .param-row:last-child { margin-bottom: 0; }
-        .param-label {
-            font-size: 0.78rem;
-            font-weight: 500;
-            color: var(--mauve);
-            min-width: 70px;
-        }
-        .param-value {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--rose);
-            min-width: 32px;
-            text-align: right;
-        }
-        input[type="range"] {
-            flex: 1;
-            appearance: none;
-            height: 4px;
-            background: var(--blush);
-            border-radius: 100px;
-            outline: none;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--rose);
-            border: 2px solid var(--white);
-            box-shadow: 0 2px 6px var(--shadow);
-            cursor: pointer;
-            transition: transform 0.15s;
-        }
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        /* Generate button */
-        .btn-generate {
-            width: 100%;
-            padding: 16px;
-            border-radius: 100px;
-            border: none;
-            background: var(--deep);
-            color: var(--white);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            letter-spacing: 0.5px;
-            box-shadow: 0 6px 20px var(--shadow);
-        }
-        .btn-generate:hover:not(:disabled) { background: var(--mauve); transform: translateY(-2px); box-shadow: 0 10px 30px var(--shadow); }
-        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        /* Status / result */
-        .status-box {
-            background: var(--white);
-            border: 1px solid var(--blush);
-            border-radius: 20px;
-            padding: 16px 18px;
-            display: none;
-        }
-        .status-box.visible { display: block; }
-
-        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .status-text { font-size: 0.82rem; color: var(--mauve); font-weight: 600; }
-        .status-time { font-size: 0.78rem; color: var(--rose); font-weight: 700; }
-
-        .progress-bar { height: 6px; background: var(--soft); border-radius: 100px; overflow: hidden; }
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--blush), var(--rose), var(--mauve));
-            border-radius: 100px;
-            transition: width 0.5s ease;
-        }
-
-        .status-hint { font-size: 0.72rem; color: var(--mauve); margin-top: 8px; opacity: 0.8; }
-
-        /* Result image */
-        .result-box {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .result-box.visible { display: flex; }
-
-        .result-img-wrap {
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 2px solid var(--blush);
-            box-shadow: 0 8px 30px var(--shadow);
-        }
-        .result-img {
-            width: 100%;
-            display: block;
-            border-radius: 22px;
-            animation: magicReveal 0.8s ease-out forwards;
-        }
-        @keyframes magicReveal {
-            from { opacity: 0; filter: blur(8px); transform: scale(0.97); }
-            to   { opacity: 1; filter: blur(0);   transform: scale(1); }
-        }
-
-        .result-actions { display: flex; gap: 10px; }
-        .btn-action {
-            flex: 1;
-            padding: 10px;
-            border-radius: 100px;
-            border: none;
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .btn-download { background: var(--deep); color: var(--white); }
-        .btn-download:hover { background: var(--mauve); }
-        .btn-again { background: var(--white); color: var(--rose); border: 2px solid var(--blush); }
-        .btn-again:hover { background: var(--blush); }
-
-        /* Error */
-        .error-box {
-            background: #fff0f3;
-            border: 1px solid #ffb3c1;
-            border-radius: 16px;
-            padding: 12px 16px;
-            font-size: 0.82rem;
-            color: #c0392b;
-            display: none;
-        }
-        .error-box.visible { display: block; }
-
-        /* Server warning */
-        .server-warn {
-            background: var(--soft);
-            border: 1px dashed var(--rose);
-            border-radius: 16px;
-            padding: 12px 16px;
-            font-size: 0.78rem;
-            color: var(--mauve);
-            line-height: 1.6;
-        }
-        .server-warn strong { color: var(--rose); }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .wrapper { padding: 12px; }
-            .container { border-radius: 30px; }
-            .header { padding: 16px 20px; }
-            .content { flex-direction: column; gap: 20px; padding: 20px; }
-            .left-side { width: 100%; }
-            .upload-area { max-height: 45vw; min-height: 200px; }
-            .page-title { font-size: 1.5rem; }
-            .style-grid { grid-template-columns: repeat(3,1fr); gap: 8px; }
-            .style-card { padding: 10px 6px; }
-            .style-emoji { font-size: 1.4rem; }
-        }
-        @media (max-width: 400px) {
-            .page-title { font-size: 1.2rem; }
-            .style-name { font-size: 0.7rem; }
-            .style-desc { display: none; }
-        }
-    </style>
-</head>
-<body>
-<div class="wrapper">
-  <div class="container">
-
-    <!-- HEADER -->
-    <div class="header">
-      <a href="index.html" class="logo">Blythe<span>llo</span></a>
-      <div class="header-nav">
-        <a href="index.html" class="nav-link">← Home</a>
-        <a href="#" class="nav-link active">✨ Generator</a>
-      </div>
-    </div>
-
-    <!-- CONTENT -->
-    <main class="content">
-
-      <!-- LEFT: upload -->
-      <div class="left-side">
-        <div class="upload-area" id="upload-area">
-          <input type="file" id="file-input" accept="image/jpeg,image/png">
-          <img class="preview-img" id="preview-img" alt="preview">
-          <div class="preview-overlay" id="preview-overlay">🔄 Change photo</div>
-          <div id="upload-placeholder">
-            <div class="upload-icon">🎀</div>
-            <div class="upload-label">Drop your photo here</div>
-            <div class="upload-hint">JPEG or PNG · up to 10 MB</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: controls -->
-      <div class="right-side">
-        <div>
-          <h1 class="page-title">Create your Blythe</h1>
-          <p class="page-subtitle">Upload a photo and transform it into a doll</p>
-        </div>
-
-        <!-- Style -->
-        <div>
-          <div class="section-label">Choose style</div>
-          <div class="style-grid">
-            <div class="style-card selected" data-style="blythe">
-              <span class="style-emoji">🎀</span>
-              <div class="style-name">Blythe</div>
-              <div class="style-desc">Big glossy eyes</div>
-            </div>
-            <div class="style-card" data-style="anime">
-              <span class="style-emoji">🌸</span>
-              <div class="style-name">Anime</div>
-              <div class="style-desc">Chibi kawaii</div>
-            </div>
-            <div class="style-card" data-style="watercolor">
-              <span class="style-emoji">🎨</span>
-              <div class="style-name">Watercolor</div>
-              <div class="style-desc">Soft painting</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Params -->
-        <div>
-          <div class="section-label">Fine-tune</div>
-          <div class="params-box">
-            <div class="param-row">
-              <span class="param-label">Strength</span>
-              <input type="range" id="strength" min="10" max="100" value="65">
-              <span class="param-value" id="strength-val">0.65</span>
-            </div>
-            <div class="param-row">
-              <span class="param-label">Steps</span>
-              <input type="range" id="steps" min="10" max="50" value="20">
-              <span class="param-value" id="steps-val">20</span>
-            </div>
-            <div class="param-row">
-              <span class="param-label">Guidance</span>
-              <input type="range" id="guidance" min="10" max="200" value="75">
-              <span class="param-value" id="guidance-val">7.5</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Server note -->
-        <div class="server-warn">
-          ⏳ <strong>Note:</strong> The server runs on CPU — generation takes <strong>5–15 minutes</strong>. Please be patient after clicking Generate!
-        </div>
-
-        <!-- Generate -->
-        <button class="btn-generate" id="btn-generate">✨ Generate Doll</button>
-
-        <!-- Status -->
-        <div class="status-box" id="status-box">
-          <div class="status-header">
-            <span class="status-text" id="status-text">Connecting...</span>
-            <span class="status-time" id="status-time"></span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-          </div>
-          <div class="status-hint" id="status-hint"></div>
-        </div>
-
-        <!-- Error -->
-        <div class="error-box" id="error-box"></div>
-
-        <!-- Result -->
-        <div class="result-box" id="result-box">
-          <div class="result-img-wrap">
-            <img class="result-img" id="result-img" alt="Your Blythe doll">
-          </div>
-          <div class="result-actions">
-            <button class="btn-action btn-download" id="btn-download">⬇️ Download</button>
-            <button class="btn-action btn-again" id="btn-again">🔄 Try again</button>
-          </div>
-        </div>
-
-      </div>
-    </main>
-  </div>
-</div>
-
-<script>
-const API_URL = "https://etotipochek-blythe-doll.hf.space";
-
-// ---- UI refs ----
-const uploadArea    = document.getElementById('upload-area');
-const fileInput     = document.getElementById('file-input');
-const previewImg    = document.getElementById('preview-img');
-const previewOverlay= document.getElementById('preview-overlay');
-const uploadPlaceholder = document.getElementById('upload-placeholder');
-const btnGenerate   = document.getElementById('btn-generate');
-const statusBox     = document.getElementById('status-box');
-const statusText    = document.getElementById('status-text');
-const statusTime    = document.getElementById('status-time');
-const statusHint    = document.getElementById('status-hint');
-const progressFill  = document.getElementById('progress-fill');
-const errorBox      = document.getElementById('error-box');
-const resultBox     = document.getElementById('result-box');
-const resultImg     = document.getElementById('result-img');
-const btnDownload   = document.getElementById('btn-download');
-const btnAgain      = document.getElementById('btn-again');
-
-let selectedFile = null;
-let selectedStyle = 'blythe';
-let startTime = null;
-let timerInterval = null;
-
-// ---- Style select ----
-document.querySelectorAll('.style-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedStyle = card.dataset.style;
-  });
-});
-
-// ---- Sliders ----
-document.getElementById('strength').addEventListener('input', function() {
-  document.getElementById('strength-val').textContent = (this.value / 100).toFixed(2);
-});
-document.getElementById('steps').addEventListener('input', function() {
-  document.getElementById('steps-val').textContent = this.value;
-});
-document.getElementById('guidance').addEventListener('input', function() {
-  document.getElementById('guidance-val').textContent = (this.value / 10).toFixed(1);
-});
-
-// ---- Upload ----
-uploadArea.addEventListener('click', () => fileInput.click());
-previewOverlay.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
-
-uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
-uploadArea.addEventListener('drop', (e) => {
-  e.preventDefault();
-  uploadArea.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) setFile(file);
-});
-
-fileInput.addEventListener('change', () => {
-  if (fileInput.files[0]) setFile(fileInput.files[0]);
-});
-
-// ---- Client-side validation ----
-function validateFileClient(file) {
-  const allowed = ['image/jpeg', 'image/jpg', 'image/png'];
-  if (!allowed.includes(file.type)) {
-    return 'Только JPEG и PNG файлы. Выбранный формат не поддерживается.';
-  }
-  if (file.size > 10 * 1024 * 1024) {
-    return 'Файл слишком большой. Максимум 10 МБ.';
-  }
-  if (file.size < 5 * 1024) {
-    return 'Файл слишком маленький. Загрузите нормальное фото.';
-  }
-  return null;
-}
-
-function validateImageSize(file) {
-  return new Promise((resolve) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      if (img.width < 100 || img.height < 100) {
-        resolve(`Изображение слишком маленькое (${img.width}x${img.height}px). Минимум 100x100px.`);
-      } else {
-        resolve(null);
-      }
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve('Не удалось прочитать изображение.'); };
-    img.src = url;
-  });
-}
-
-async function setFile(file) {
-  hideError();
-
-  // Быстрая проверка формата и размера файла
-  const quickError = validateFileClient(file);
-  if (quickError) { showError('⚠️ ' + quickError); return; }
-
-  // Проверка размеров изображения
-  const sizeError = await validateImageSize(file);
-  if (sizeError) { showError('⚠️ ' + sizeError); return; }
-
-  selectedFile = file;
-  const url = URL.createObjectURL(file);
-  previewImg.src = url;
-  previewImg.classList.add('visible');
-  previewOverlay.classList.add('visible');
-  uploadPlaceholder.style.display = 'none';
-  uploadArea.classList.add('has-image');
-}
-
-// ---- Generate ----
-btnGenerate.addEventListener('click', generate);
-
-async function generate() {
-  if (!selectedFile) { showError('⚠️ Сначала загрузите фото.'); return; }
-
-  hideError();
-  hideResult();
-  showStatus('⏳ Подключаемся к серверу...', '');
-  setProgress(5);
-  btnGenerate.disabled = true;
-  startTimer();
-
-  // Health check
-  try {
-    const h = await fetch(API_URL + '/health');
-    const hd = await h.json();
-    if (hd.status === 'loading') {
-      updateStatus('⏳ Модель загружается, подождите...', 'Это может занять 10–20 мин при первом запуске');
-      setProgress(10);
-    }
-  } catch(e) {
-    showError('❌ Сервер недоступен. Попробуйте позже.');
-    resetUI();
-    return;
-  }
-
-  updateStatus('🎨 Генерируем вашу куклу...', 'CPU генерация: 5–15 минут');
-  setProgress(15);
-
-  const formData = new FormData();
-  formData.append('file', selectedFile);
-  formData.append('style', selectedStyle);
-  formData.append('steps', document.getElementById('steps').value);
-  formData.append('strength', (document.getElementById('strength').value / 100).toFixed(2));
-  formData.append('guidance', (document.getElementById('guidance').value / 10).toFixed(1));
-
-  try {
-    const res = await fetch(API_URL + '/generate', { method: 'POST', body: formData });
-
-    if (res.status === 200) {
-      const blob = await res.blob();
-      showResult(blob);
-    } else if (res.status === 202) {
-      const data = await res.json();
-      updateStatus(`⏳ В очереди (позиция: ${data.position})`, 'Ожидаем свободный слот...');
-      setProgress(20);
-      await pollQueue(data.task_id);
-    } else if (res.status === 429) {
-      const err = await res.json().catch(() => ({}));
-      showError('⏱️ ' + (err.detail || 'Слишком много запросов. Подождите немного.'));
-      resetUI();
-    } else if (res.status === 503) {
-      showError('⏳ Модель ещё загружается. Подождите 1–2 минуты и попробуйте снова.');
-      resetUI();
-    } else if (res.status === 400) {
-      const err = await res.json().catch(() => ({}));
-      showError('⚠️ ' + (err.detail || 'Ошибка проверки фото.'));
-      resetUI();
-    } else {
-      const err = await res.json().catch(() => ({}));
-      showError('❌ ' + (err.detail || err.error || 'Неизвестная ошибка'));
-      resetUI();
-    }
-  } catch(e) {
-    showError('❌ Ошибка соединения: ' + e.message);
-    resetUI();
-  }
-}
-
-async function pollQueue(taskId) {
-  let elapsed = 0;
-  const maxWait = 60;
-
-  for (let i = 0; i < maxWait; i++) {
-    await sleep(10000);
-    elapsed += 10;
-
-    const pct = Math.min(15 + Math.floor((elapsed / 600) * 75), 90);
-    setProgress(pct);
-    updateStatus(`🎨 Генерируем... (${Math.floor(elapsed / 60)}м ${elapsed % 60}с)`, 'Почти готово, подождите!');
-
-    try {
-      const res = await fetch(API_URL + '/queue/' + taskId);
-      const data = await res.json();
-
-      if (data.status === 'completed') {
-        const imgRes = await fetch(API_URL + '/result/' + taskId);
-        const blob = await imgRes.blob();
-        showResult(blob);
-        return;
-      } else if (data.status === 'failed') {
-        showError('❌ Ошибка генерации: ' + (data.error || 'неизвестно'));
-        resetUI();
-        return;
-      }
-    } catch(e) { /* продолжаем опрос */ }
-  }
-
-  showError('⏰ Превышено время ожидания. Попробуйте снова.');
-  resetUI();
-}
-
-// ---- Result ----
-function showResult(blob) {
-  stopTimer();
-  const url = URL.createObjectURL(blob);
-  resultImg.src = url;
-  resultBox.classList.add('visible');
-  statusBox.classList.remove('visible');
-  setProgress(100);
-  btnGenerate.disabled = false;
-
-  btnDownload.onclick = () => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `blythe_${selectedStyle}_${Date.now()}.png`;
-    a.click();
-  };
-}
-
-btnAgain.addEventListener('click', () => {
-  hideResult();
-  hideError();
-  btnGenerate.disabled = false;
-});
-
-// ---- Helpers ----
-function showStatus(text, hint) {
-  statusBox.classList.add('visible');
-  statusText.textContent = text;
-  statusHint.textContent = hint || '';
-}
-function updateStatus(text, hint) {
-  statusText.textContent = text;
-  statusHint.textContent = hint || '';
-}
-function setProgress(pct) { progressFill.style.width = pct + '%'; }
-function showError(msg) { errorBox.textContent = msg; errorBox.classList.add('visible'); }
-function hideError() { errorBox.classList.remove('visible'); }
-function hideResult() { resultBox.classList.remove('visible'); }
-function resetUI() { stopTimer(); statusBox.classList.remove('visible'); btnGenerate.disabled = false; }
-function startTimer() {
-  startTime = Date.now();
-  timerInterval = setInterval(() => {
-    const s = Math.floor((Date.now() - startTime) / 1000);
-    const m = Math.floor(s / 60);
-    statusTime.textContent = m > 0 ? `${m}м ${s % 60}с` : `${s}с`;
-  }, 1000);
-}
-function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
