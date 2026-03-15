@@ -33,7 +33,6 @@
 
         .wrapper {
             display: flex;
-            gap: 24px;
             max-width: 1400px;
             width: 100%;
             min-height: 100vh;
@@ -60,6 +59,695 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--blush);
+        }
+        .logo { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--deep); text-decoration:none; }
+        .logo span { color:var(--rose); font-style:italic; }
+        .header-nav { display:flex; gap:10px; align-items:center; }
+        .nav-link {
+            background:var(--soft); border:1px solid var(--blush); border-radius:100px;
+            padding:6px 16px; font-size:.8rem; font-weight:500; cursor:pointer;
+            transition:all .2s; color:var(--mauve); font-family:'DM Sans',sans-serif;
+            text-decoration:none; display:inline-flex; align-items:center; gap:5px;
+        }
+        .nav-link:hover { background:var(--blush); border-color:var(--rose); color:var(--deep); }
+        .nav-link.active { background:var(--deep); color:var(--white); border-color:var(--deep); }
+
+        /* STATUS BADGE */
+        .status-badge {
+            display:flex; align-items:center; gap:6px;
+            padding:5px 12px; border-radius:100px;
+            border:1px solid var(--blush); background:var(--soft);
+            font-size:.75rem; color:var(--mauve);
+        }
+        .status-dot { width:7px; height:7px; border-radius:50%; background:var(--blush); transition:all .3s; }
+        .status-dot.online { background:#86efac; box-shadow:0 0 6px #86efac; }
+        .status-dot.busy { background:var(--rose); box-shadow:0 0 6px var(--rose); animation:pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+        /* MODE TABS */
+        .mode-tabs {
+            display:flex; gap:0;
+            background:var(--soft); border-radius:100px;
+            padding:4px; border:1px solid var(--blush);
+        }
+        .mode-tab {
+            padding:8px 20px; border-radius:100px; border:none;
+            font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600;
+            cursor:pointer; transition:all .2s; color:var(--mauve); background:transparent;
+        }
+        .mode-tab.active { background:var(--white); color:var(--deep); box-shadow:0 2px 8px var(--shadow); }
+
+        /* CONTENT */
+        .content {
+            display:flex; gap:40px; padding:30px;
+            align-items:flex-start; flex:1;
+        }
+
+        .left-side { flex:1; display:flex; flex-direction:column; align-items:center; gap:16px; }
+        .right-side { flex:1.5; display:flex; flex-direction:column; gap:18px; }
+
+        /* UPLOAD AREA */
+        .upload-area {
+            width:100%; aspect-ratio:1; max-height:52vh;
+            border:2px dashed var(--blush); border-radius:30px;
+            background:var(--soft);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            cursor:pointer; transition:all .3s;
+            position:relative; overflow:hidden;
+        }
+        .upload-area:hover,.upload-area.drag-over { border-color:var(--rose); background:rgba(242,196,206,.2); }
+        .upload-area.has-image { border-style:solid; }
+        .upload-icon { font-size:3rem; margin-bottom:12px; opacity:.7; }
+        .upload-label { font-family:'Playfair Display',serif; font-size:1rem; color:var(--mauve); margin-bottom:6px; }
+        .upload-hint { font-size:.75rem; color:var(--rose); opacity:.8; }
+        #file-input { display:none; }
+        .preview-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:28px; display:none; }
+        .preview-img.visible { display:block; }
+        .preview-overlay {
+            position:absolute; bottom:12px; right:12px;
+            background:rgba(44,26,34,.7); color:var(--white); border-radius:100px;
+            padding:5px 14px; font-size:.72rem; font-weight:500; backdrop-filter:blur(4px);
+            display:none; cursor:pointer; transition:background .2s;
+        }
+        .preview-overlay.visible { display:block; }
+        .preview-overlay:hover { background:rgba(212,132,154,.9); }
+
+        /* TXT2IMG PANEL */
+        .txt-panel { display:none; flex-direction:column; gap:14px; width:100%; }
+        .txt-panel.active { display:flex; }
+
+        .txt-illustration {
+            width:100%; aspect-ratio:1; max-height:52vh;
+            border-radius:30px; background:linear-gradient(135deg,#fdf0f5,#f7e8f0);
+            border:2px solid var(--blush);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:12px; color:var(--mauve);
+        }
+        .txt-illustration-icon { font-size:4rem; animation:float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
+        .txt-illustration p { font-family:'Playfair Display',serif; font-size:.95rem; font-style:italic; opacity:.7; }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size:.75rem; font-weight:600; color:var(--mauve);
+            letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;
+        }
+
+        /* STYLE GRID */
+        .style-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .style-card {
+            background:var(--white); border:2px solid var(--blush);
+            border-radius:18px; padding:14px 10px; text-align:center;
+            cursor:pointer; transition:all .2s;
+        }
+        .style-card:hover { border-color:var(--rose); transform:translateY(-2px); box-shadow:0 6px 20px var(--shadow); }
+        .style-card.selected { border-color:var(--rose); background:rgba(242,196,206,.15); box-shadow:0 4px 16px var(--shadow); }
+        .style-emoji { font-size:1.8rem; display:block; margin-bottom:6px; }
+        .style-name { font-size:.8rem; font-weight:600; color:var(--deep); }
+        .style-desc { font-size:.68rem; color:var(--mauve); margin-top:3px; }
+
+        /* PROMPT FIELD */
+        .prompt-wrap { display:flex; flex-direction:column; gap:8px; }
+        textarea {
+            width:100%; padding:12px 14px;
+            background:var(--white); border:1.5px solid var(--blush);
+            border-radius:16px; color:var(--deep);
+            font-family:'DM Sans',sans-serif; font-size:.85rem;
+            resize:vertical; min-height:72px; max-height:140px;
+            outline:none; transition:border-color .2s; line-height:1.5;
+        }
+        textarea:focus { border-color:var(--rose); }
+        textarea::placeholder { color:var(--rose); opacity:.6; }
+
+        /* PARAMS BOX */
+        .params-box {
+            background:var(--white); border:1px solid var(--blush);
+            border-radius:20px; padding:16px 18px;
+        }
+        .param-row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+        .param-row:last-child { margin-bottom:0; }
+        .param-label { font-size:.78rem; font-weight:500; color:var(--mauve); min-width:70px; }
+        .param-value { font-size:.78rem; font-weight:700; color:var(--rose); min-width:32px; text-align:right; }
+        input[type=range] { flex:1; appearance:none; height:4px; background:var(--blush); border-radius:100px; outline:none; cursor:pointer; }
+        input[type=range]::-webkit-slider-thumb {
+            appearance:none; width:16px; height:16px; border-radius:50%;
+            background:var(--rose); border:2px solid var(--white);
+            box-shadow:0 2px 6px var(--shadow); cursor:pointer; transition:transform .15s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.2); }
+
+        /* SIZE SELECT */
+        .size-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        select {
+            width:100%; padding:9px 12px;
+            background:var(--white); border:1.5px solid var(--blush);
+            border-radius:12px; color:var(--deep);
+            font-family:'DM Sans',sans-serif; font-size:.82rem;
+            outline:none; cursor:pointer; transition:border-color .2s;
+        }
+        select:focus { border-color:var(--rose); }
+
+        /* GENERATE BTN */
+        .btn-generate {
+            width:100%; padding:16px; border-radius:100px; border:none;
+            background:var(--deep); color:var(--white);
+            font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700;
+            cursor:pointer; transition:all .25s; letter-spacing:.5px;
+            box-shadow:0 6px 20px var(--shadow);
+        }
+        .btn-generate:hover:not(:disabled) { background:var(--mauve); transform:translateY(-2px); box-shadow:0 10px 30px var(--shadow); }
+        .btn-generate:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+        /* STATUS */
+        .status-box { background:var(--white); border:1px solid var(--blush); border-radius:20px; padding:16px 18px; display:none; }
+        .status-box.visible { display:block; }
+        .status-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+        .status-text { font-size:.82rem; color:var(--mauve); font-weight:600; }
+        .status-time { font-size:.78rem; color:var(--rose); font-weight:700; }
+        .progress-bar { height:6px; background:var(--soft); border-radius:100px; overflow:hidden; }
+        .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--blush),var(--rose),var(--mauve)); border-radius:100px; transition:width .5s ease; }
+        .status-hint { font-size:.72rem; color:var(--mauve); margin-top:8px; opacity:.8; }
+
+        /* ERROR */
+        .error-box { background:#fff0f3; border:1px solid #ffb3c1; border-radius:16px; padding:12px 16px; font-size:.82rem; color:#c0392b; display:none; }
+        .error-box.visible { display:block; }
+
+        /* RESULT */
+        .result-box { display:none; flex-direction:column; gap:12px; }
+        .result-box.visible { display:flex; }
+        .result-img-wrap { position:relative; border-radius:24px; overflow:hidden; border:2px solid var(--blush); box-shadow:0 8px 30px var(--shadow); }
+        .result-img { width:100%; display:block; border-radius:22px; animation:magicReveal .8s ease-out forwards; }
+        @keyframes magicReveal { from{opacity:0;filter:blur(8px);transform:scale(.97)} to{opacity:1;filter:blur(0);transform:scale(1)} }
+        .result-actions { display:flex; gap:10px; }
+        .btn-action { flex:1; padding:10px; border-radius:100px; border:none; font-size:.82rem; font-weight:600; cursor:pointer; transition:all .2s; font-family:'DM Sans',sans-serif; }
+        .btn-download { background:var(--deep); color:var(--white); }
+        .btn-download:hover { background:var(--mauve); }
+        .btn-again { background:var(--white); color:var(--rose); border:2px solid var(--blush); }
+        .btn-again:hover { background:var(--blush); }
+
+        /* PAGE TITLE */
+        .page-title { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--deep); line-height:1.2; }
+        .page-subtitle { font-size:.95rem; color:var(--mauve); font-weight:300; }
+
+        /* TAG CHIPS for quick prompts */
+        .chips { display:flex; flex-wrap:wrap; gap:6px; }
+        .chip {
+            padding:4px 12px; border-radius:100px; font-size:.72rem;
+            border:1px solid var(--blush); background:var(--white);
+            color:var(--mauve); cursor:pointer; transition:all .15s;
+        }
+        .chip:hover { background:var(--blush); border-color:var(--rose); color:var(--deep); }
+
+        /* HISTORY STRIP */
+        .history-strip { display:flex; gap:8px; flex-wrap:wrap; }
+        .hist-thumb {
+            width:54px; height:54px; border-radius:10px; object-fit:cover;
+            border:2px solid transparent; cursor:pointer; opacity:.7; transition:all .2s;
+        }
+        .hist-thumb:hover,.hist-thumb.active { border-color:var(--rose); opacity:1; }
+
+        @media(max-width:768px) {
+            .wrapper { padding:12px; }
+            .container { border-radius:30px; }
+            .header { padding:16px 20px; }
+            .content { flex-direction:column; gap:20px; padding:20px; }
+            .left-side { width:100%; }
+            .page-title { font-size:1.5rem; }
+            .style-grid { gap:8px; }
+            .style-card { padding:10px 6px; }
+            .style-emoji { font-size:1.4rem; }
+            .mode-tab { padding:7px 14px; font-size:.75rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <a href="index.html" class="logo">Blythe<span>llo</span></a>
+      <div class="header-nav">
+        <a href="index.html" class="nav-link">← Home</a>
+        <a href="#" class="nav-link active">✨ Generator</a>
+        <div class="status-badge">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">checking...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- LEFT -->
+      <div class="left-side">
+
+        <!-- img2img upload (shown in img2img mode) -->
+        <div id="img2imgLeft" style="width:100%">
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept="image/jpeg,image/png">
+            <img class="preview-img" id="preview-img" alt="preview">
+            <div class="preview-overlay" id="preview-overlay">🔄 Change photo</div>
+            <div id="upload-placeholder">
+              <div class="upload-icon">🎀</div>
+              <div class="upload-label">Drop your photo here</div>
+              <div class="upload-hint">JPEG or PNG · up to 10 MB</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- txt2img illustration (shown in txt2img mode) -->
+        <div id="txt2imgLeft" style="width:100%;display:none">
+          <div class="txt-illustration">
+            <div class="txt-illustration-icon">✨</div>
+            <p>Describe your doll</p>
+          </div>
+        </div>
+
+        <!-- history -->
+        <div id="historyWrap" style="display:none;width:100%">
+          <div class="section-label" style="margin-bottom:8px">Recent</div>
+          <div class="history-strip" id="historyStrip"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right-side">
+        <div>
+          <h1 class="page-title">Create your Blythe</h1>
+          <p class="page-subtitle">Generate from text or transform a photo</p>
+        </div>
+
+        <!-- MODE TABS -->
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="tabTxt" onclick="switchMode('txt2img')">✍️ Text → Doll</button>
+          <button class="mode-tab" id="tabImg" onclick="switchMode('img2img')">🖼 Photo → Doll</button>
+        </div>
+
+        <!-- TXT2IMG CONTROLS -->
+        <div id="ctrlTxt2img" style="display:flex;flex-direction:column;gap:14px">
+
+          <div class="prompt-wrap">
+            <div class="section-label">Prompt</div>
+            <textarea id="promptText" rows="3" placeholder="portrait, blue eyes, flower crown, soft light, masterpiece...">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
+            <div class="chips" id="promptChips">
+              <span class="chip" onclick="addChip('gothic style')">gothic style</span>
+              <span class="chip" onclick="addChip('flower crown')">flower crown</span>
+              <span class="chip" onclick="addChip('silver hair')">silver hair</span>
+              <span class="chip" onclick="addChip('black hair')">black hair</span>
+              <span class="chip" onclick="addChip('anime style')">anime style</span>
+              <span class="chip" onclick="addChip('full body')">full body</span>
+              <span class="chip" onclick="addChip('neon lights')">neon lights</span>
+              <span class="chip" onclick="addChip('watercolor style')">watercolor</span>
+            </div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="section-label">Negative prompt</div>
+            <textarea id="negText" rows="2" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
+          </div>
+
+          <div>
+            <div class="section-label">Size</div>
+            <div class="size-grid">
+              <div>
+                <div style="font-size:.72rem;color:var(--mauve);margin-bottom:4px">Width</div>
+                <select id="txtWidth">
+                  <option value="512" selected>512 px</option>
+                  <option value="640">640 px</option>
+                  <option value="768">768 px</option>
+                </select>
+              </div>
+              <div>
+                <div style="font-size:.72rem;color:var(--mauve);margin-bottom:4px">Height</div>
+                <select id="txtHeight">
+                  <option value="512" selected>512 px</option>
+                  <option value="640">640 px</option>
+                  <option value="768">768 px — portrait</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- IMG2IMG CONTROLS -->
+        <div id="ctrlImg2img" style="display:none;flex-direction:column;gap:14px">
+
+          <div class="prompt-wrap">
+            <div class="section-label">Prompt</div>
+            <textarea id="promptImg" rows="3">portrait, oversized eye chips, soft studio lighting, rosy cheeks, masterpiece</textarea>
+            <div class="chips">
+              <span class="chip" onclick="addChipImg('gothic style')">gothic style</span>
+              <span class="chip" onclick="addChipImg('flower crown')">flower crown</span>
+              <span class="chip" onclick="addChipImg('soft pastel')">soft pastel</span>
+              <span class="chip" onclick="addChipImg('full body')">full body</span>
+              <span class="chip" onclick="addChipImg('dark background')">dark bg</span>
+            </div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="section-label">Negative prompt</div>
+            <textarea id="negImg" rows="2" style="min-height:52px">realistic human, photograph, 3d render, deformed, ugly, nsfw, blurry</textarea>
+          </div>
+
+          <div>
+            <div class="section-label">Style</div>
+            <div class="style-grid">
+              <div class="style-card selected" data-style="blythe">
+                <span class="style-emoji">🎀</span>
+                <div class="style-name">Blythe</div>
+                <div class="style-desc">Big glossy eyes</div>
+              </div>
+              <div class="style-card" data-style="anime">
+                <span class="style-emoji">🌸</span>
+                <div class="style-name">Anime</div>
+                <div class="style-desc">Chibi kawaii</div>
+              </div>
+              <div class="style-card" data-style="watercolor">
+                <span class="style-emoji">🎨</span>
+                <div class="style-name">Watercolor</div>
+                <div class="style-desc">Soft painting</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SHARED PARAMS -->
+        <div>
+          <div class="section-label">Fine-tune</div>
+          <div class="params-box">
+            <div class="param-row" id="strengthRow" style="display:none">
+              <span class="param-label">Strength</span>
+              <input type="range" id="strength" min="10" max="100" value="65"
+                oninput="document.getElementById('strength-val').textContent=(this.value/100).toFixed(2)">
+              <span class="param-value" id="strength-val">0.65</span>
+            </div>
+            <div class="param-row">
+              <span class="param-label">Steps</span>
+              <input type="range" id="steps" min="10" max="50" value="30"
+                oninput="document.getElementById('steps-val').textContent=this.value">
+              <span class="param-value" id="steps-val">30</span>
+            </div>
+            <div class="param-row">
+              <span class="param-label">Guidance</span>
+              <input type="range" id="guidance" min="10" max="150" value="75"
+                oninput="document.getElementById('guidance-val').textContent=(this.value/10).toFixed(1)">
+              <span class="param-value" id="guidance-val">7.5</span>
+            </div>
+            <div class="param-row">
+              <span class="param-label">Seed</span>
+              <input type="range" id="seed" min="-1" max="9999" value="-1"
+                oninput="document.getElementById('seed-val').textContent=this.value=='-1'?'random':this.value">
+              <span class="param-value" id="seed-val">random</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-generate" id="btn-generate">✨ Generate Doll</button>
+
+        <div class="status-box" id="status-box">
+          <div class="status-header">
+            <span class="status-text" id="status-text">Connecting...</span>
+            <span class="status-time" id="status-time"></span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="status-hint" id="status-hint"></div>
+        </div>
+
+        <div class="error-box" id="error-box"></div>
+
+        <div class="result-box" id="result-box">
+          <div class="result-img-wrap">
+            <img class="result-img" id="result-img" alt="Your Blythe doll">
+          </div>
+          <div class="result-actions">
+            <button class="btn-action btn-download" id="btn-download">⬇️ Download</button>
+            <button class="btn-action btn-again" id="btn-again">🔄 Try again</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ── API ───────────────────────────────────────────────────────────────────────
+const TXT2IMG_URL = "https://eton3d--picolab-generate.modal.run";
+const IMG2IMG_URL = "https://eton3d--picolab-img2img.modal.run";
+const HEALTH_URL  = "https://eton3d--picolab-health.modal.run";
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentMode   = 'txt2img';
+let selectedFile  = null;
+let selectedStyle = 'blythe';
+let timerInterval = null;
+let startTime     = null;
+const history     = [];
+
+// ── STYLE PROMPTS ─────────────────────────────────────────────────────────────
+const stylePrompts = {
+  blythe:     '',
+  anime:      'anime style, chibi, kawaii, ',
+  watercolor: 'watercolor style, soft painting, artistic, ',
+};
+
+// ── REFS ──────────────────────────────────────────────────────────────────────
+const uploadArea     = document.getElementById('upload-area');
+const fileInput      = document.getElementById('file-input');
+const previewImg     = document.getElementById('preview-img');
+const previewOverlay = document.getElementById('preview-overlay');
+const uploadPH       = document.getElementById('upload-placeholder');
+const btnGenerate    = document.getElementById('btn-generate');
+const statusBox      = document.getElementById('status-box');
+const statusText     = document.getElementById('status-text');
+const statusTime     = document.getElementById('status-time');
+const statusHint     = document.getElementById('status-hint');
+const progressFill   = document.getElementById('progress-fill');
+const errorBox       = document.getElementById('error-box');
+const resultBox      = document.getElementById('result-box');
+const resultImg      = document.getElementById('result-img');
+
+// ── HEALTH CHECK ─────────────────────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const r = await fetch(HEALTH_URL, { method: 'GET' });
+    if (r.ok) {
+      document.getElementById('statusDot').className = 'status-dot online';
+      document.getElementById('statusText').textContent = 'online';
+    } else throw new Error();
+  } catch {
+    document.getElementById('statusDot').className = 'status-dot';
+    document.getElementById('statusText').textContent = 'offline';
+  }
+}
+
+// ── MODE SWITCH ───────────────────────────────────────────────────────────────
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tabTxt').classList.toggle('active', mode === 'txt2img');
+  document.getElementById('tabImg').classList.toggle('active', mode === 'img2img');
+  document.getElementById('ctrlTxt2img').style.display = mode === 'txt2img' ? 'flex' : 'none';
+  document.getElementById('ctrlImg2img').style.display = mode === 'img2img' ? 'flex' : 'none';
+  document.getElementById('img2imgLeft').style.display = mode === 'img2img' ? 'block' : 'none';
+  document.getElementById('txt2imgLeft').style.display = mode === 'txt2img' ? 'block' : 'none';
+  document.getElementById('strengthRow').style.display = mode === 'img2img' ? 'flex' : 'none';
+  hideError(); hideResult();
+}
+
+// ── STYLE SELECT ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.style-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.style-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedStyle = card.dataset.style;
+  });
+});
+
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
+uploadArea.addEventListener('click', () => fileInput.click());
+previewOverlay.addEventListener('click', e => { e.stopPropagation(); fileInput.click(); });
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('drag-over'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
+
+async function setFile(file) {
+  hideError();
+  if (!['image/jpeg','image/jpg','image/png'].includes(file.type)) { showError('⚠️ Only JPEG and PNG supported.'); return; }
+  if (file.size > 10 * 1024 * 1024) { showError('⚠️ File too large. Max 10 MB.'); return; }
+  selectedFile = file;
+  const url = URL.createObjectURL(file);
+  previewImg.src = url;
+  previewImg.classList.add('visible');
+  previewOverlay.classList.add('visible');
+  uploadPH.style.display = 'none';
+  uploadArea.classList.add('has-image');
+}
+
+// ── CHIPS ─────────────────────────────────────────────────────────────────────
+function addChip(tag) {
+  const ta = document.getElementById('promptText');
+  ta.value = ta.value.trimEnd() + (ta.value.endsWith(',') ? ' ' : ', ') + tag;
+}
+function addChipImg(tag) {
+  const ta = document.getElementById('promptImg');
+  ta.value = ta.value.trimEnd() + (ta.value.endsWith(',') ? ' ' : ', ') + tag;
+}
+
+// ── GENERATE ─────────────────────────────────────────────────────────────────
+btnGenerate.addEventListener('click', generate);
+
+async function generate() {
+  hideError(); hideResult();
+  const steps    = parseInt(document.getElementById('steps').value);
+  const guidance = parseFloat(document.getElementById('guidance').value) / 10;
+  const seed     = parseInt(document.getElementById('seed').value);
+
+  if (currentMode === 'img2img' && !selectedFile) { showError('⚠️ Please upload a photo first.'); return; }
+
+  showStatus('✨ Sending request...', '');
+  setProgress(10);
+  btnGenerate.disabled = true;
+  startTimer();
+
+  document.getElementById('statusDot').className = 'status-dot busy';
+  document.getElementById('statusText').textContent = 'generating...';
+
+  try {
+    let url, bodyObj;
+
+    if (currentMode === 'txt2img') {
+      const stylePrefix = stylePrompts[selectedStyle] || '';
+      url = TXT2IMG_URL;
+      bodyObj = {
+        prompt:          stylePrefix + document.getElementById('promptText').value,
+        negative_prompt: document.getElementById('negText').value,
+        steps, guidance, seed,
+        width:  parseInt(document.getElementById('txtWidth').value),
+        height: parseInt(document.getElementById('txtHeight').value),
+      };
+      updateStatus('🎨 Generating from text...', 'First request may take 3–5 min (cold start)');
+    } else {
+      // read file as base64
+      const b64 = await fileToBase64(selectedFile);
+      const stylePrefix = stylePrompts[selectedStyle] || '';
+      url = IMG2IMG_URL;
+      bodyObj = {
+        image:           b64,
+        prompt:          stylePrefix + document.getElementById('promptImg').value,
+        negative_prompt: document.getElementById('negImg').value,
+        strength:        parseFloat(document.getElementById('strength').value) / 100,
+        steps, guidance, seed,
+      };
+      updateStatus('🎨 Transforming your photo...', 'First request may take 3–5 min (cold start)');
+    }
+
+    setProgress(25);
+
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyObj),
+      signal: AbortSignal.timeout(660000),
+    });
+
+    setProgress(85);
+
+    if (!r.ok) {
+      const txt = await r.text();
+      throw new Error('HTTP ' + r.status + ': ' + txt.slice(0, 200));
+    }
+
+    const data = await r.json();
+    if (!data.image) throw new Error('No image in response');
+
+    setProgress(100);
+    showResultImage(data.image, data.prompt);
+
+  } catch(e) {
+    showError('❌ ' + e.message);
+    document.getElementById('statusDot').className = 'status-dot online';
+    document.getElementById('statusText').textContent = 'online';
+  } finally {
+    stopTimer();
+    statusBox.classList.remove('visible');
+    btnGenerate.disabled = false;
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result.split(',')[1]);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+// ── RESULT ────────────────────────────────────────────────────────────────────
+function showResultImage(b64, prompt) {
+  const src = 'data:image/png;base64,' + b64;
+  resultImg.src = src;
+  resultBox.classList.add('visible');
+
+  document.getElementById('btn-download').onclick = () => {
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = 'blythello_' + Date.now() + '.png';
+    a.click();
+  };
+
+  // add to history
+  history.unshift({ src, prompt });
+  renderHistory();
+
+  document.getElementById('statusDot').className = 'status-dot online';
+  document.getElementById('statusText').textContent = 'online';
+}
+
+function renderHistory() {
+  if (history.length === 0) return;
+  document.getElementById('historyWrap').style.display = 'block';
+  document.getElementById('historyStrip').innerHTML = history.slice(0, 10).map((h, i) =>
+    `<img class="hist-thumb ${i===0?'active':''}" src="${h.src}" title="${h.prompt||''}" onclick="viewHistory(${i})">`
+  ).join('');
+}
+
+function viewHistory(i) {
+  resultImg.src = history[i].src;
+  resultBox.classList.add('visible');
+  document.querySelectorAll('.hist-thumb').forEach((t,j) => t.classList.toggle('active', j===i));
+}
+
+document.getElementById('btn-again').addEventListener('click', () => { hideResult(); hideError(); btnGenerate.disabled = false; });
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function showStatus(text, hint) { statusBox.classList.add('visible'); statusText.textContent = text; statusHint.textContent = hint || ''; }
+function updateStatus(text, hint) { statusText.textContent = text; if (hint !== undefined) statusHint.textContent = hint; }
+function setProgress(pct) { progressFill.style.width = pct + '%'; }
+function showError(msg) { errorBox.textContent = msg; errorBox.classList.add('visible'); }
+function hideError() { errorBox.classList.remove('visible'); }
+function hideResult() { resultBox.classList.remove('visible'); }
+function startTimer() {
+  startTime = Date.now();
+  timerInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    statusTime.textContent = s < 60 ? s + 's' : Math.floor(s/60) + 'm ' + (s%60) + 's';
+  }, 1000);
+}
+function stopTimer() { if (timerInterval) { clearInterval(timerInterval); timerInterval = null; } }
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+checkHealth();
+</script>
+</body>
+</html>
             padding: 20px 30px;
             border-bottom: 1px solid var(--blush);
         }
